@@ -1,0 +1,13 @@
+[versions]
+# Kotlin
+kotlin-version = "1.9.0"
+kotlin-coroutines-core = "1.7.1"
+makeevrserg-gradleplugin = "0.0.10"
+gradle-android = "7.4.2"
+[libraries]
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines-core" }
+makeevrserg-gradleplugin-convention = { module = "ru.astrainteractive.gradleplugin:convention", version.ref = "makeevrserg-gradleplugin" }
+makeevrserg-gradleplugin-android = { module = "ru.astrainteractive.gradleplugin:android", version.ref = "makeevrserg-gradleplugin" }
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }
+gradle-android = { id = "com.android.library", version.ref = "gradle-android" }

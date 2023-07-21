@@ -1,0 +1,5 @@
+.gradle
+.idea
+build
+kstorage/build
+local.properties
