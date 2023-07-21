@@ -139,5 +139,5 @@ kotlin {
 }
 
 android {
-    namespace = "${projectInfo.group}.storageflow"
+    namespace = "${projectInfo.group}.kstorage"
 }
