@@ -7,7 +7,7 @@ import ru.astrainteractive.klibs.kstorage.api.StateFlowMutableStorageValue
 /**
  * This DefaultFlowStorageValue<T> can be used with delegation
  */
-internal class FlowMutableStorageValueImpl<T>(
+internal class StateFlowMutableStorageValueImpl<T>(
     private val default: T,
     private val loadSettingsValue: () -> T,
     private val saveSettingsValue: (T) -> Unit
