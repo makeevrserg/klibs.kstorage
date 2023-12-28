@@ -41,6 +41,7 @@ class SettingsApi(private val settings: Settings) {
     )
 }
 ```
+
 ## Creating Custom MutableStorageValue
 
 ```kotlin
@@ -61,6 +62,29 @@ class SettingsApi(private val settings: Settings) {
     )
 
     val customStorageValue = CustomClassStorageValue(key = "CUSTOM_KEY", default = CustomClass(100))
+}
+```
+
+## Converting nullable into non-null
+
+It also works with StateFlowMutableStorageValue
+
+This allows you to create parsers **only** for nullable values. After you can easily convert it to
+non-nullable by `withDefault` extension!
+
+```kotlin
+class SettingsApi(private val settings: Settings) {
+    class IntMutableStorageValue(
+        key: String
+    ) : MutableStorageValue<Int?> by MutableStorageValue(
+        default = null as Int?,
+        loadSettingsValue = { settings[key] },
+        saveSettingsValue = { integerValue: Int? ->
+            settings[key] = integerValue
+        }
+    )
+
+    val customStorageValue: MutableStorageValue<Int> = IntMutableStorageValue("int_value").withDefault(15)
 }
 ```
 
