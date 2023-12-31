@@ -8,9 +8,14 @@ import ru.astrainteractive.klibs.kstorage.api.MutableStorageValue
 internal class MutableStorageValueImpl<T>(
     private val default: T,
     private val loadSettingsValue: () -> T,
-    private val saveSettingsValue: (T) -> Unit
+    private val saveSettingsValue: (T) -> Unit,
+    private val onChanged: (T) -> Unit = {}
 ) : MutableStorageValue<T> {
     private var currentValue: T = loadSettingsValue.invoke()
+        set(value) {
+            onChanged.invoke(value)
+            field = value
+        }
     override val value: T
         get() = currentValue
 

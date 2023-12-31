@@ -2,6 +2,7 @@ package ru.astrainteractive.klibs.kstorage.impl
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import ru.astrainteractive.klibs.kstorage.api.MutableStorageValue
 import ru.astrainteractive.klibs.kstorage.api.StateFlowMutableStorageValue
 
 /**
@@ -10,31 +11,17 @@ import ru.astrainteractive.klibs.kstorage.api.StateFlowMutableStorageValue
 internal class StateFlowMutableStorageValueImpl<T>(
     private val default: T,
     private val loadSettingsValue: () -> T,
-    private val saveSettingsValue: (T) -> Unit
-) : StateFlowMutableStorageValue<T> {
-
-    private val mutableStateFlow by lazy {
-        MutableStateFlow(loadSettingsValue.invoke())
-    }
+    private val saveSettingsValue: (T) -> Unit,
+    private val mutableStateFlow: MutableStateFlow<T> = MutableStateFlow(loadSettingsValue.invoke())
+) : StateFlowMutableStorageValue<T>,
+    MutableStorageValue<T> by MutableStorageValueImpl(
+        default = default,
+        loadSettingsValue = loadSettingsValue,
+        saveSettingsValue = saveSettingsValue,
+        onChanged = { mutableStateFlow.value = it }
+    ) {
     override val stateFlow: StateFlow<T>
         get() = mutableStateFlow
-
-    override fun load(): T {
-        val newValue = loadSettingsValue.invoke()
-        mutableStateFlow.value = newValue
-        return newValue
-    }
-
-    override fun save(value: T) {
-        saveSettingsValue.invoke(value)
-        mutableStateFlow.value = value
-    }
-
-    override fun reset() {
-        save(default)
-    }
-
-    override fun update(block: (T) -> T) {
-        save(block(value))
-    }
+    override val value: T
+        get() = stateFlow.value
 }
