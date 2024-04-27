@@ -11,11 +11,6 @@ interface MutableStorageValue<T> : StorageValue<T> {
     fun save(value: T)
 
     /**
-     * Save value with a refernce to current
-     */
-    fun update(block: (T) -> T)
-
-    /**
      * Reset value to to default
      */
     fun reset()

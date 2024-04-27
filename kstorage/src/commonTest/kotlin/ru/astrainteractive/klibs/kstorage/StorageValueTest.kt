@@ -9,9 +9,9 @@ class StorageValueTest {
     fun testLoadStorageValue() {
         val expectedValue = 11
         val storageValue = StateFlowMutableStorageValue(
-            default = 0,
-            loadSettingsValue = { expectedValue },
-            saveSettingsValue = { }
+            factory = { 0 },
+            loader = { expectedValue },
+            saver = { }
         )
         assertEquals(expectedValue, storageValue.value)
         assertEquals(expectedValue, storageValue.stateFlow.value)
@@ -24,9 +24,9 @@ class StorageValueTest {
     fun testResetStorageValue() {
         val expectedValue = 0
         val storageValue = StateFlowMutableStorageValue(
-            default = expectedValue,
-            loadSettingsValue = { 11 },
-            saveSettingsValue = { }
+            factory = { expectedValue },
+            loader = { 11 },
+            saver = { }
         )
         assertNotEquals(expectedValue, storageValue.value)
         assertNotEquals(expectedValue, storageValue.stateFlow.value)
@@ -38,9 +38,9 @@ class StorageValueTest {
     @Test
     fun testSaveStorageValue() {
         val storageValue = StateFlowMutableStorageValue(
-            default = 0,
-            loadSettingsValue = { },
-            saveSettingsValue = { }
+            factory = { 0 },
+            loader = { },
+            saver = { }
         )
         storageValue.save(10)
         assertEquals(storageValue.value, 10)
@@ -50,7 +50,7 @@ class StorageValueTest {
     @Test
     fun testInMemoryStorageValue() {
         val expectedValue = 0
-        val storageValue = StateFlowMutableStorageValue(expectedValue)
+        val storageValue = StateFlowMutableStorageValue { expectedValue }
         assertEquals(expectedValue, storageValue.value)
         assertEquals(expectedValue, storageValue.stateFlow.value)
         val newExpectedValue = expectedValue * 2
