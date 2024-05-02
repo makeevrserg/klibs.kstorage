@@ -4,7 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class StorageValueTest {
+internal class StorageValueTest {
     @Test
     fun testLoadStorageValue() {
         val expectedValue = 11
