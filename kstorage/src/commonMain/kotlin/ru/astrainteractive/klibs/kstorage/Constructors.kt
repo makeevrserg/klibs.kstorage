@@ -4,37 +4,42 @@ package ru.astrainteractive.klibs.kstorage
 
 import ru.astrainteractive.klibs.kstorage.api.MutableStorageValue
 import ru.astrainteractive.klibs.kstorage.api.StateFlowMutableStorageValue
+import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.api.value.ValueLoader
+import ru.astrainteractive.klibs.kstorage.api.value.ValueSaver
 import ru.astrainteractive.klibs.kstorage.impl.MutableStorageValueImpl
 import ru.astrainteractive.klibs.kstorage.impl.StateFlowMutableStorageValueImpl
 
 fun <T> MutableStorageValue(
-    default: T,
-    loadSettingsValue: () -> T,
-    saveSettingsValue: (T) -> Unit
+    factory: ValueFactory<T>,
+    saver: ValueSaver<T>,
+    loader: ValueLoader<T>,
 ): MutableStorageValue<T> {
     return MutableStorageValueImpl(
-        default = default,
-        loadSettingsValue = loadSettingsValue,
-        saveSettingsValue = saveSettingsValue
+        factory = factory,
+        loader = loader,
+        saver = saver
     )
 }
 
 fun <T> StateFlowMutableStorageValue(
-    default: T,
-    loadSettingsValue: () -> T,
-    saveSettingsValue: (T) -> Unit
+    factory: ValueFactory<T>,
+    saver: ValueSaver<T>,
+    loader: ValueLoader<T>,
 ): StateFlowMutableStorageValue<T> {
     return StateFlowMutableStorageValueImpl(
-        default = default,
-        loadSettingsValue = loadSettingsValue,
-        saveSettingsValue = saveSettingsValue
+        factory = factory,
+        loader = loader,
+        saver = saver
     )
 }
 
 fun <T> StateFlowMutableStorageValue(
-    default: T
-): StateFlowMutableStorageValue<T> = StateFlowMutableStorageValueImpl(
-    default = default,
-    loadSettingsValue = { default },
-    saveSettingsValue = {}
-)
+    factory: ValueFactory<T>,
+): StateFlowMutableStorageValue<T> {
+    return StateFlowMutableStorageValueImpl(
+        factory = factory,
+        loader = { factory.create() },
+        saver = {}
+    )
+}

@@ -1,13 +1,18 @@
 [versions]
 # Kotlin
-kotlin-version = "1.9.0"
-kotlin-coroutines-core = "1.7.1"
-makeevrserg-gradleplugin = "0.0.10"
-gradle-android = "7.4.2"
+kotlin-version = "1.9.23" # # https://github.com/JetBrains/kotlin
+kotlin-coroutines-core = "1.8.0" # https://github.com/Kotlin/kotlinx.coroutines
+makeevrserg-gradleplugin = "0.5.1" # https://github.com/makeevrserg/gradle-plugin
+gradle-android = "7.4.2" # https://developer.android.com/build#top-level
+androidx-datastore = "1.1.1"
 [libraries]
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines-core" }
+kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines-core" }
 makeevrserg-gradleplugin-convention = { module = "ru.astrainteractive.gradleplugin:convention", version.ref = "makeevrserg-gradleplugin" }
 makeevrserg-gradleplugin-android = { module = "ru.astrainteractive.gradleplugin:android", version.ref = "makeevrserg-gradleplugin" }
+androidx-datastore-core-okio = { group = "androidx.datastore", name = "datastore-core-okio", version.ref = "androidx-datastore" }
+androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "androidx-datastore" }
+
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-version" }
 gradle-android = { id = "com.android.library", version.ref = "gradle-android" }

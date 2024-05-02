@@ -1,40 +1,35 @@
 package ru.astrainteractive.klibs.kstorage.impl
 
 import ru.astrainteractive.klibs.kstorage.api.MutableStorageValue
+import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.api.value.ValueLoader
+import ru.astrainteractive.klibs.kstorage.api.value.ValueSaver
 
 /**
  * This DefaultStorageValue<T> can be used with delegation
  */
 internal class MutableStorageValueImpl<T>(
-    private val default: T,
-    private val loadSettingsValue: () -> T,
-    private val saveSettingsValue: (T) -> Unit,
-    private val onChanged: (T) -> Unit = {}
+    private val factory: ValueFactory<T>,
+    private val saver: ValueSaver<T>,
+    private val loader: ValueLoader<T>,
 ) : MutableStorageValue<T> {
-    private var currentValue: T = loadSettingsValue.invoke()
-        set(value) {
-            onChanged.invoke(value)
-            field = value
-        }
+    private var currentValue: T = loader.load()
+
     override val value: T
         get() = currentValue
 
     override fun load(): T {
-        val newValue = loadSettingsValue.invoke()
+        val newValue = loader.load()
         currentValue = newValue
         return newValue
     }
 
     override fun save(value: T) {
-        saveSettingsValue.invoke(value)
+        saver.save(value)
         currentValue = value
     }
 
     override fun reset() {
-        save(default)
-    }
-
-    override fun update(block: (T) -> T) {
-        save(block(value))
+        save(factory.create())
     }
 }

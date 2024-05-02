@@ -1,0 +1,17 @@
+name: Check pull request
+
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  gradle_validation:
+    uses: ./.github/workflows/gradle-wrapper-validation.yml
+  detekt_validation:
+    needs: gradle_validation
+    uses: ./.github/workflows/detekt-validation.yml
+  tests_validation:
+    needs: gradle_validation
+    uses: ./.github/workflows/tests-validation.yml
