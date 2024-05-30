@@ -1,0 +1,38 @@
+name: "tests"
+on:
+  workflow_call:
+    secrets:
+      SIGNING_KEY_ID:
+        required: true
+      SIGNING_PASSWORD:
+        required: true
+      OSSRH_USERNAME:
+        required: true
+      OSSRH_PASSWORD:
+        required: true
+      SIGNING_KEY:
+        required: true
+
+jobs:
+  tests:
+    name: "Run tests"
+    runs-on: ubuntu-latest
+    env:
+      makeevrserg_SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+      makeevrserg_SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+      makeevrserg_OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      makeevrserg_OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      makeevrserg_SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 1.17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Give gradle permission
+        run: chmod +x gradlew
+      - name: Run publish
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: publishToMavenLocal
