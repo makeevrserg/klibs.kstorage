@@ -1,5 +1,7 @@
 .gradle
 .idea
+.kotlin
 build
 kstorage/build
 local.properties
+kotlin-js-store/*

@@ -6,12 +6,34 @@ on:
       - master
       - develop
 
+# Concurrency strategy:
+#   github.workflow: distinguish this workflow from others
+#   github.event_name: distinguish `push` event from `pull_request` event
+#   github.ref_name: distinguish branch
+#   github.repository: distinguish owner+repository
+#
+# Reference:
+#   https://docs.github.com/en/actions/using-jobs/using-concurrency
+#   https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{github.ref_name}}-${{github.repository}}
+  cancel-in-progress: true
+
 jobs:
   gradle_validation:
-    uses: ./.github/workflows/gradle-wrapper-validation.yml
+    uses: ./.github/workflows/call-gradle-wrapper-validation.yml
   detekt_validation:
     needs: gradle_validation
-    uses: ./.github/workflows/detekt-validation.yml
+    uses: ./.github/workflows/call-detekt-validation.yml
   tests_validation:
     needs: gradle_validation
-    uses: ./.github/workflows/tests-validation.yml
+    uses: ./.github/workflows/call-tests-validation.yml
+  publsih_validation:
+    needs: [ gradle_validation,tests_validation,detekt_validation ]
+    uses: ./.github/workflows/call-publish-validation.yml
+    secrets:
+      SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+      SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+      OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
