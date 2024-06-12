@@ -2,8 +2,8 @@ package ru.astrainteractive.klibs.kstorage.suspend
 
 import kotlinx.coroutines.flow.Flow
 
-interface FlowStorageValue<T> {
+interface FlowKrate<T> {
     val flow: Flow<T>
 
-    suspend fun load(): T
+    suspend fun loadAndGet(): T
 }

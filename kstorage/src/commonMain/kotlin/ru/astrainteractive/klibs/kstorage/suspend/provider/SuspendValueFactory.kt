@@ -1,4 +1,4 @@
-package ru.astrainteractive.klibs.kstorage.suspend.value
+package ru.astrainteractive.klibs.kstorage.suspend.provider
 
 fun interface SuspendValueFactory<T> {
     suspend fun create(): T
