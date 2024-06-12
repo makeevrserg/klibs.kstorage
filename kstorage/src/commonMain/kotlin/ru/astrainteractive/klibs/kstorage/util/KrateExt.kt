@@ -1,8 +1,8 @@
 package ru.astrainteractive.klibs.kstorage.util
 
-import kotlinx.coroutines.flow.first
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
 
 object KrateExt {
     /**
@@ -33,16 +33,16 @@ object KrateExt {
     /**
      * This will call [FlowMutableKrate.reset] and return first [FlowMutableKrate.flow]
      */
-    suspend fun <T> FlowMutableKrate<T>.resetAndGet(): T {
+    suspend fun <T> SuspendMutableKrate<T>.resetAndGet(): T {
         reset()
-        return flow.first()
+        return getValue()
     }
 
     /**
      * Save value with a reference to current
      */
-    suspend fun <T> FlowMutableKrate<T>.update(block: suspend (T) -> T) {
-        val oldValue = flow.first()
+    suspend fun <T> SuspendMutableKrate<T>.update(block: suspend (T) -> T) {
+        val oldValue = getValue()
         val newValue = block.invoke(oldValue)
         save(newValue)
     }
@@ -50,8 +50,8 @@ object KrateExt {
     /**
      * Save value with a reference to current and return new value
      */
-    suspend fun <T> FlowMutableKrate<T>.updateAndGet(block: suspend (T) -> T): T {
-        val oldValue = flow.first()
+    suspend fun <T> SuspendMutableKrate<T>.updateAndGet(block: suspend (T) -> T): T {
+        val oldValue = getValue()
         val newValue = block.invoke(oldValue)
         save(newValue)
         return newValue
