@@ -8,7 +8,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class FlowMutableKrateTest {
-
     @Test
     fun test(): Unit = runTest {
         val initialValue = 10

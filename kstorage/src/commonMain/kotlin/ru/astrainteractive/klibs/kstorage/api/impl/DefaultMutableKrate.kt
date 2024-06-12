@@ -6,7 +6,7 @@ import ru.astrainteractive.klibs.kstorage.api.provider.ValueLoader
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueSaver
 
 /**
- * This DefaultStorageValue<T> can be used with delegation
+ * This [DefaultMutableKrate] can be used with delegation
  */
 class DefaultMutableKrate<T>(
     private val factory: DefaultValueFactory<T>,

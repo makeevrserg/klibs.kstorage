@@ -6,7 +6,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class SuspendMutableKrateTest {
-
     @Test
     fun test(): Unit = runTest {
         val initialValue = 10

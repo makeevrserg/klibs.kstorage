@@ -23,25 +23,44 @@ klibs-kstorage = "<latest-version>"
 klibs-kstorage = { module = "ru.astrainteractive.klibs:kstorage", version.ref = "klibs-kstorage" }
 ```
 
-## Creating MutableStorageValue
+## Creating MutableKrate
 
 ```kotlin
 class SettingsApi(private val settings: Settings) {
-    val mutableStorageValue = DefaultMutableKrate(
+    // Create krate just in place
+    val mutableKrate = DefaultMutableKrate(
         factory = { 0 },
         loader = { settings["INT_KEY"] },
         saver = { value -> settings["INT_KEY"] = value }
     )
+    // Or create class
+    class IntKrate(
+        key: String,
+        settings: Settings
+    ) : MutableKrate<Int?> by DefaultMutableKrate<Int?>(
+        factory = { null },
+        saver = { value -> settings[key] = value },
+        loader = { settings[key] }
+    )
+    // And register just like that
+    val mutableKrate2 = IntKrate("KEY", settings)
+}
+
+fun callFunction(api: SettingsApi) {
+    api.mutableKrate.loadAndGet()
+    api.mutableKrate.save(12)
 }
 ```
 
-## Creating Custom MutableStorageValue
+## Creating Custom MutableKrate
 
 ```kotlin
 class SettingsApi(private val settings: Settings) {
+    // Create custom class for your krate
     data class CustomClass(val customInt: Int)
 
-    private class CustomClassStorageValue(
+    // Create custom type-safe parser for your krate
+    private class CustomClassKrate(
         key: String,
         factory: DefaultValueFactory<CustomClass>
     ) : MutableKrate<CustomClass> by DefaultMutableKrate(
@@ -50,7 +69,8 @@ class SettingsApi(private val settings: Settings) {
         saver = { customClass -> settings[key] = customClass.customInt }
     )
 
-    val customStorageValue: MutableKrate<CustomClass> = CustomClassStorageValue(
+    // Register krate
+    val customKrate: MutableKrate<CustomClass> = CustomClassKrate(
         key = "CUSTOM_KEY",
         factory = { CustomClass(100) }
     )
@@ -59,16 +79,18 @@ class SettingsApi(private val settings: Settings) {
 
 ## Converting nullable into non-null
 
-It also works with StateFlowMutableStorageValue
+It also works with StateFlowMutableKrate
 
 This allows you to create parsers **only** for nullable values. After you can easily convert it to
 non-nullable by `withDefault` extension!
 
 ```kotlin
 class SettingsApi(private val settings: Settings) {
+    // Create custom class for your krate
     data class CustomClass(val customInt: Int)
 
-    private class CustomClassStorageValue(
+    // Create custom nullable parser for your krate
+    private class CustomClassKrate(
         key: String,
         factory: DefaultValueFactory<CustomClass?>
     ) : MutableKrate<CustomClass?> by DefaultMutableKrate(
@@ -77,7 +99,8 @@ class SettingsApi(private val settings: Settings) {
         saver = { customClass -> settings[key] = customClass?.customInt }
     )
 
-    val customStorageValue: MutableKrate<CustomClass> = CustomClassStorageValue(
+    // Register krate with default parameter
+    val customKrate: MutableKrate<CustomClass> = CustomClassKrate(
         key = "CUSTOM_KEY",
     ).withDefault(15)
 }
@@ -88,6 +111,7 @@ class SettingsApi(private val settings: Settings) {
 ```kotlin
 class SettingsApi(private val dataStore: DataStore<Preferences>) {
 
+    // Wrap any library with custom implementation, DataStore for example
     internal class DataStoreFlowMutableKrate<T>(
         key: Preferences.Key<T>,
         dataStore: DataStore<Preferences>,
@@ -103,12 +127,34 @@ class SettingsApi(private val dataStore: DataStore<Preferences>) {
         }
     )
 
+    // Initialize krate value
     val intKrate = DataStoreFlowMutableKrate<Int?>(
         key = intPreferencesKey("some_int_key"),
         dataStore = dataStore,
         factory = { null }
     ).withDefault(12)
 }
+
+suspend fun callFunction(api: SettingsApi) {
+    api.intKrate.getValue()
+    api.intKrate.save(12)
+}
+```
+
+## Extensions
+
+```kotlin
+val mutableKrate: MutableKrate<Int> = TODO()
+val suspendMutableKrate: SuspendMutableKrate<Int> = TODO()
+// Reset to default and get a new value
+mutableKrate.resetAndGet()
+suspendMutableKrate.resetAndGet()
+// Update with a reference to current value
+mutableKrate.update { value -> value + 1 }
+suspendMutableKrate.update { value -> value + 1 }
+// Update with a reference to current value and get 
+mutableKrate.updateAndGet { value -> value + 1 }
+suspendMutableKrate.updateAndGet { value -> value + 1 }
 ```
 
 That's it! As easy as it looks
