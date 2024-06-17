@@ -3,7 +3,7 @@
 kotlin-version = "2.0.0" # # https://github.com/JetBrains/kotlin
 kotlin-coroutines-core = "1.8.1" # https://github.com/Kotlin/kotlinx.coroutines
 klibs-gradleplugin = "1.3.3" # https://github.com/makeevrserg/gradle-plugin
-gradle-android = "8.4.2" # https://developer.android.com/build#top-level
+gradle-android = "8.5.0" # https://developer.android.com/build#top-level
 androidx-datastore = "1.1.1" # https://developer.android.com/topic/libraries/architecture/datastore
 [libraries]
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines-core" }
