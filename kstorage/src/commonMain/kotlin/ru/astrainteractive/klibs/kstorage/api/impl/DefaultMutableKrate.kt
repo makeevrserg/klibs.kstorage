@@ -1,7 +1,7 @@
 package ru.astrainteractive.klibs.kstorage.api.impl
 
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
-import ru.astrainteractive.klibs.kstorage.api.provider.DefaultValueFactory
+import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueLoader
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueSaver
 
@@ -9,7 +9,7 @@ import ru.astrainteractive.klibs.kstorage.api.provider.ValueSaver
  * This [DefaultMutableKrate] can be used with delegation
  */
 class DefaultMutableKrate<T>(
-    private val factory: DefaultValueFactory<T>,
+    private val factory: ValueFactory<T>,
     private val saver: ValueSaver<T> = ValueSaver.Empty(),
     private val loader: ValueLoader<T>,
 ) : MutableKrate<T> {

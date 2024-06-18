@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import ru.astrainteractive.klibs.kstorage.api.StateFlowMutableKrate
-import ru.astrainteractive.klibs.kstorage.api.provider.DefaultValueFactory
+import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueLoader
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueSaver
 
@@ -12,7 +12,7 @@ import ru.astrainteractive.klibs.kstorage.api.provider.ValueSaver
  * This [DefaultStateFlowMutableKrate] can be used with delegation
  */
 class DefaultStateFlowMutableKrate<T>(
-    private val factory: DefaultValueFactory<T>,
+    private val factory: ValueFactory<T>,
     private val saver: ValueSaver<T> = ValueSaver.Empty(),
     private val loader: ValueLoader<T>,
 ) : StateFlowMutableKrate<T> {
