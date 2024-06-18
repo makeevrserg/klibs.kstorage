@@ -7,13 +7,21 @@ import ru.astrainteractive.klibs.kstorage.api.provider.ValueSaver
 
 /**
  * This [DefaultMutableKrate] can be used with delegation
+ *
+ * @param requireInstantLoading - if true, will load value into [cachedValue] directly from [loader].
+ * If false will put [factory] value into [cachedValue]
  */
 class DefaultMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val saver: ValueSaver<T> = ValueSaver.Empty(),
     private val loader: ValueLoader<T>,
+    private val requireInstantLoading: Boolean = true
 ) : MutableKrate<T> {
-    private var _cachedValue: T = loader.loadAndGet() ?: factory.create()
+
+    private var _cachedValue: T = when {
+        requireInstantLoading -> loader.loadAndGet() ?: factory.create()
+        else -> factory.create()
+    }
 
     override val cachedValue: T
         get() = _cachedValue
