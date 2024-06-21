@@ -6,9 +6,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.map
 import okio.FileSystem
+import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
 import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
-import ru.astrainteractive.klibs.kstorage.suspend.provider.SuspendValueFactory
 
 internal class DataStoreFlowMutableKrate<T>(
     key: Preferences.Key<T>,
@@ -19,7 +19,7 @@ internal class DataStoreFlowMutableKrate<T>(
             if (file.exists()) file.delete()
             path
         },
-    factory: SuspendValueFactory<T>,
+    factory: ValueFactory<T>,
 ) : FlowMutableKrate<T> by DefaultFlowMutableKrate(
     factory = factory,
     loader = { dataStore.data.map { it[key] } },

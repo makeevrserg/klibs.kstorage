@@ -1,12 +1,12 @@
 package ru.astrainteractive.klibs.kstorage.suspend.impl
 
+import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
-import ru.astrainteractive.klibs.kstorage.suspend.provider.SuspendValueFactory
 import ru.astrainteractive.klibs.kstorage.suspend.provider.SuspendValueLoader
 import ru.astrainteractive.klibs.kstorage.suspend.provider.SuspendValueSaver
 
 class DefaultSuspendMutableKrate<T>(
-    private val factory: SuspendValueFactory<T>,
+    private val factory: ValueFactory<T>,
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty()
 ) : SuspendMutableKrate<T> {
