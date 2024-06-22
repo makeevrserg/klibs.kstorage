@@ -8,9 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
-import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.FlowKrate
 import ru.astrainteractive.klibs.kstorage.suspend.provider.FlowProvider
 import ru.astrainteractive.klibs.kstorage.suspend.provider.SuspendValueSaver
 
@@ -18,10 +19,14 @@ class DefaultFlowMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: FlowProvider<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty()
-) : FlowMutableKrate<T> {
+) : FlowKrate.Mutable<T> {
+    private var _cachedValue: T = factory.create()
+    override val cachedValue: T
+        get() = _cachedValue
 
     override val flow: Flow<T> = loader.provide()
         .map { value -> value ?: factory.create() }
+        .onEach { value -> _cachedValue = value }
 
     override fun stateFlow(
         coroutineScope: CoroutineScope,
@@ -31,13 +36,16 @@ class DefaultFlowMutableKrate<T>(
         .flowOn(dispatcher)
         .stateIn(coroutineScope, sharingStarted, factory.create())
 
-    override suspend fun getValue(): T {
-        return loader.provide().first() ?: factory.create()
+    override suspend fun loadAndGet(): T {
+        val value = loader.provide().first() ?: factory.create()
+        _cachedValue = value
+        return value
     }
 
     override suspend fun save(value: T) {
         if (saver is SuspendValueSaver.Empty) return
         saver.save(value)
+        _cachedValue = value
     }
 
     override suspend fun reset() {
