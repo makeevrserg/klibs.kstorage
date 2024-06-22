@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
-import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendKrate
 import ru.astrainteractive.klibs.kstorage.suspend.provider.SuspendValueLoader
 import ru.astrainteractive.klibs.kstorage.suspend.provider.SuspendValueSaver
 
@@ -12,7 +12,7 @@ class DefaultSuspendMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty()
-) : StateFlowSuspendMutableKrate<T> {
+) : StateFlowSuspendKrate.Mutable<T> {
     private val _cachedStateFlow = MutableStateFlow(factory.create())
     override val cachedStateFlow: StateFlow<T> = _cachedStateFlow.asStateFlow()
 

@@ -18,4 +18,6 @@ interface FlowKrate<T> : SuspendKrate<T> {
 
     val CoroutineScope.stateFlow: StateFlow<T>
         get() = stateFlow(coroutineScope = this)
+
+    interface Mutable<T> : FlowKrate<T>, SuspendKrate.Mutable<T>
 }
