@@ -13,12 +13,12 @@ internal class SuspendMutableKrateTest {
             key = "some_int_key",
             factory = { initialValue }
         )
-        assertEquals(initialValue, krate.getValue())
+        assertEquals(initialValue, krate.loadAndGet())
         15.let { newValue ->
             krate.save(newValue)
-            assertEquals(newValue, krate.getValue())
+            assertEquals(newValue, krate.loadAndGet())
         }
         krate.reset()
-        assertEquals(initialValue, krate.getValue())
+        assertEquals(initialValue, krate.loadAndGet())
     }
 }

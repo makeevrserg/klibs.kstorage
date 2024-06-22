@@ -16,7 +16,7 @@ internal class FlowMutableKrateTest {
             factory = { initialValue }
         )
         assertEquals(initialValue, krate.flow.first())
-        assertEquals(initialValue, krate.getValue())
+        assertEquals(initialValue, krate.loadAndGet())
         15.let { newValue ->
             krate.save(newValue)
             assertEquals(newValue, krate.flow.first())

@@ -35,14 +35,14 @@ object KrateExt {
      */
     suspend fun <T> SuspendMutableKrate<T>.resetAndGet(): T {
         reset()
-        return getValue()
+        return loadAndGet()
     }
 
     /**
      * Save value with a reference to current
      */
     suspend fun <T> SuspendMutableKrate<T>.update(block: suspend (T) -> T) {
-        val oldValue = getValue()
+        val oldValue = loadAndGet()
         val newValue = block.invoke(oldValue)
         save(newValue)
     }
@@ -51,7 +51,7 @@ object KrateExt {
      * Save value with a reference to current and return new value
      */
     suspend fun <T> SuspendMutableKrate<T>.updateAndGet(block: suspend (T) -> T): T {
-        val oldValue = getValue()
+        val oldValue = loadAndGet()
         val newValue = block.invoke(oldValue)
         save(newValue)
         return newValue

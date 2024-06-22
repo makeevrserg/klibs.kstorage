@@ -9,6 +9,7 @@ import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
 import ru.astrainteractive.klibs.kstorage.suspend.FlowKrate
 import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendKrate
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
@@ -63,7 +64,7 @@ object KrateDefaultExt {
     fun <T : Any> SuspendKrate<T?>.withDefault(factory: ValueFactory<T>): SuspendKrate<T> {
         return DefaultSuspendMutableKrate(
             factory = factory,
-            loader = { getValue() }
+            loader = { loadAndGet() }
         )
     }
 
@@ -73,13 +74,26 @@ object KrateDefaultExt {
     fun <T : Any> SuspendMutableKrate<T?>.withDefault(factory: ValueFactory<T>): SuspendMutableKrate<T> {
         return DefaultSuspendMutableKrate(
             factory = factory,
-            loader = { getValue() },
+            loader = { loadAndGet() },
             saver = { value -> save(value) }
         )
     }
 
     /**
-     * convert nullable [FlowKrate] to type-safe via decorating [De]
+     * convert nullable [SuspendMutableKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
+     */
+    fun <T : Any> StateFlowSuspendMutableKrate<T?>.withDefault(
+        factory: ValueFactory<T>
+    ): StateFlowSuspendMutableKrate<T> {
+        return DefaultSuspendMutableKrate(
+            factory = factory,
+            loader = { loadAndGet() },
+            saver = { value -> save(value) }
+        )
+    }
+
+    /**
+     * convert nullable [FlowKrate] to type-safe via decorating [DefaultFlowMutableKrate]
      */
     fun <T : Any> FlowKrate<T?>.withDefault(factory: ValueFactory<T>): FlowKrate<T> {
         return DefaultFlowMutableKrate(
