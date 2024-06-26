@@ -17,7 +17,6 @@ class DefaultMutableKrate<T>(
 ) : Krate.Mutable<T> {
 
     private var _cachedValue: T = loader.loadAndGet() ?: factory.create()
-
     override val cachedValue: T
         get() = _cachedValue
 

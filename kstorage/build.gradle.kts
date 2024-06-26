@@ -40,11 +40,11 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.kotlin.coroutines.test)
             }
         }
         val jvmTest by getting {
             dependencies {
-                implementation(libs.kotlin.coroutines.test)
                 implementation(libs.androidx.datastore.preferences.core)
                 implementation(libs.androidx.datastore.core.okio)
             }

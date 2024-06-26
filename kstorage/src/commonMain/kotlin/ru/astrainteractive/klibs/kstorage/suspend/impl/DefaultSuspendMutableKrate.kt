@@ -23,7 +23,6 @@ class DefaultSuspendMutableKrate<T>(
     }
 
     override suspend fun save(value: T) {
-        if (saver is SuspendValueSaver.Empty) return
         saver.save(value)
         _cachedStateFlow.value = value
     }
