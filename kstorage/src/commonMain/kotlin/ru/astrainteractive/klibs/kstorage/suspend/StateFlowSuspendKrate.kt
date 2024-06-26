@@ -8,5 +8,9 @@ interface StateFlowSuspendKrate<T> : SuspendKrate<T>, CachedKrate.Coroutine<T> {
     override val cachedValue: T
         get() = cachedStateFlow.value
 
-    interface Mutable<T> : StateFlowSuspendKrate<T>, SuspendKrate.Mutable<T>
+    interface Mutable<T> : StateFlowSuspendKrate<T>, SuspendKrate.Mutable<T> {
+        override val cachedStateFlow: StateFlow<T>
+        override val cachedValue: T
+            get() = cachedStateFlow.value
+    }
 }

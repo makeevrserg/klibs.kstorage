@@ -1,7 +1,7 @@
 package ru.astrainteractive.klibs.kstorage
 
 import kotlinx.coroutines.test.runTest
-import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.test.SampleStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,12 +13,12 @@ import kotlin.test.assertEquals
  * 3. Factory value is one, the loader is another
  * 4. Factory value is null,m the loader is null
  */
-internal class StateFlowMutableKrateTest {
+internal class SuspendMutableKrateTest {
     @Test
     fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default() = runTest {
         val factoryValue = 10
         val store = SampleStore()
-        val krate = DefaultStateFlowMutableKrate(
+        val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
             loader = { null }
@@ -32,12 +32,12 @@ internal class StateFlowMutableKrateTest {
     fun GIVEN_null_as_default_10_as_loader_WHEN_load_THEN_return_loader() = runTest {
         val loaderValue = 10
         val store = SampleStore()
-        val krate = DefaultStateFlowMutableKrate(
+        val krate = DefaultSuspendMutableKrate(
             factory = { null },
             saver = { store.put("KEY", it) },
             loader = { loaderValue }
         )
-        assertEquals(loaderValue, krate.cachedValue)
+        assertEquals(null, krate.cachedValue)
         assertEquals(loaderValue, krate.loadAndGet())
         assertEquals(loaderValue, krate.cachedValue)
     }
@@ -47,12 +47,12 @@ internal class StateFlowMutableKrateTest {
         val loaderValue = 10
         val factoryValue = 15
         val store = SampleStore()
-        val krate = DefaultStateFlowMutableKrate(
+        val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
             loader = { loaderValue }
         )
-        assertEquals(loaderValue, krate.cachedValue)
+        assertEquals(factoryValue, krate.cachedValue)
         assertEquals(loaderValue, krate.loadAndGet())
         assertEquals(loaderValue, krate.cachedValue)
     }
@@ -61,7 +61,7 @@ internal class StateFlowMutableKrateTest {
     fun GIVEN_empty_store_WHEN_save_and_reset_THEN_saved_and_reset() = runTest {
         val factoryValue = 10
         val store = SampleStore()
-        val krate = DefaultStateFlowMutableKrate(
+        val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
             loader = { store.get("KEY") }
@@ -83,13 +83,14 @@ internal class StateFlowMutableKrateTest {
         val factoryValue = 10
         val defaultStoreValue = 15
         val store = SampleStore(mapOf("KEY" to defaultStoreValue))
-        val krate = DefaultStateFlowMutableKrate(
+        val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
             loader = { store.get("KEY") }
         )
-        assertEquals(defaultStoreValue, krate.cachedValue)
+        assertEquals(factoryValue, krate.cachedValue)
         assertEquals(defaultStoreValue, krate.loadAndGet())
+        assertEquals(defaultStoreValue, krate.cachedValue)
         11.let { newValue ->
             krate.save(newValue)
             assertEquals(newValue, krate.cachedValue)

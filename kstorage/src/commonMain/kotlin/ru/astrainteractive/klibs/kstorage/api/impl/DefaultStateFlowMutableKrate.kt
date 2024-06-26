@@ -3,6 +3,7 @@ package ru.astrainteractive.klibs.kstorage.api.impl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import ru.astrainteractive.klibs.kstorage.api.StateFlowKrate
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueLoader
@@ -24,13 +25,12 @@ class DefaultStateFlowMutableKrate<T>(
     override val cachedStateFlow: StateFlow<T> = _stateFlow.asStateFlow()
 
     override fun save(value: T) {
-        if (saver is ValueSaver.Empty) return
         saver.save(value)
-        _stateFlow.value = value
+        _stateFlow.update { value }
     }
 
     override fun loadAndGet(): T {
-        _stateFlow.value = loader.loadAndGet() ?: factory.create()
+        _stateFlow.update { loader.loadAndGet() ?: factory.create() }
         return cachedValue
     }
 
