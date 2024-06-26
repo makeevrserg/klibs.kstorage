@@ -27,7 +27,6 @@ class DefaultMutableKrate<T>(
     }
 
     override fun save(value: T) {
-        if (saver is ValueSaver.Empty) return
         saver.save(value)
         _cachedValue = value
     }

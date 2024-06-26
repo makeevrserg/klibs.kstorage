@@ -3,6 +3,7 @@ package ru.astrainteractive.klibs.kstorage.suspend.impl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
 import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendKrate
 import ru.astrainteractive.klibs.kstorage.suspend.provider.SuspendValueLoader
@@ -18,13 +19,13 @@ class DefaultSuspendMutableKrate<T>(
 
     override suspend fun loadAndGet(): T {
         val value = loader.loadAndGet() ?: factory.create()
-        _cachedStateFlow.value = value
+        _cachedStateFlow.update { value }
         return value
     }
 
     override suspend fun save(value: T) {
         saver.save(value)
-        _cachedStateFlow.value = value
+        _cachedStateFlow.update { value }
     }
 
     override suspend fun reset() {
