@@ -1,4 +1,4 @@
-package ru.astrainteractive.klibs.kstorage.suspend.provider
+package ru.astrainteractive.klibs.kstorage.suspend.value
 
 import kotlinx.coroutines.flow.Flow
 

@@ -1,13 +1,17 @@
 package ru.astrainteractive.klibs.kstorage.util
 
 import ru.astrainteractive.klibs.kstorage.api.Krate
-import ru.astrainteractive.klibs.kstorage.api.StateFlowKrate
+import ru.astrainteractive.klibs.kstorage.api.MutableKrate
+import ru.astrainteractive.klibs.kstorage.api.coroutine.StateFlowKrate
+import ru.astrainteractive.klibs.kstorage.api.coroutine.StateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
-import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
-import ru.astrainteractive.klibs.kstorage.suspend.FlowKrate
-import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendKrate
+import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendKrate
+import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.flow.FlowKrate
+import ru.astrainteractive.klibs.kstorage.suspend.flow.FlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.flow.StateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrate
 
@@ -25,7 +29,7 @@ object KrateDefaultExt {
     /**
      * convert nullable [ Krate.Mutable] to type-safe via decorating [DefaultMutableKrate]
      */
-    fun <T : Any> Krate.Mutable<T?>.withDefault(factory: ValueFactory<T>): Krate.Mutable<T> {
+    fun <T : Any> MutableKrate<T?>.withDefault(factory: ValueFactory<T>): MutableKrate<T> {
         return DefaultMutableKrate(
             factory = factory,
             saver = { value -> save(value) },
@@ -44,9 +48,9 @@ object KrateDefaultExt {
     }
 
     /**
-     * convert nullable [StateFlowKrate.Mutable] to type-safe via decorating [DefaultStateFlowMutableKrate]
+     * convert nullable [StateFlowMutableKrate] to type-safe via decorating [DefaultStateFlowMutableKrate]
      */
-    fun <T : Any> StateFlowKrate.Mutable<T?>.withDefault(factory: ValueFactory<T>): StateFlowKrate.Mutable<T> {
+    fun <T : Any> StateFlowMutableKrate<T?>.withDefault(factory: ValueFactory<T>): StateFlowMutableKrate<T> {
         return DefaultStateFlowMutableKrate(
             factory = factory,
             saver = { value -> save(value) },
@@ -65,9 +69,9 @@ object KrateDefaultExt {
     }
 
     /**
-     * convert nullable [SuspendKrate.Mutable] to type-safe via decorating [DefaultSuspendMutableKrate]
+     * convert nullable [SuspendMutableKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
      */
-    fun <T : Any> SuspendKrate.Mutable<T?>.withDefault(factory: ValueFactory<T>): SuspendKrate.Mutable<T> {
+    fun <T : Any> SuspendMutableKrate<T?>.withDefault(factory: ValueFactory<T>): SuspendMutableKrate<T> {
         return DefaultSuspendMutableKrate(
             factory = factory,
             loader = { loadAndGet() },
@@ -76,11 +80,11 @@ object KrateDefaultExt {
     }
 
     /**
-     * convert nullable [StateFlowSuspendKrate.Mutable] to type-safe via decorating [DefaultSuspendMutableKrate]
+     * convert nullable [StateFlowSuspendMutableKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
      */
-    fun <T : Any> StateFlowSuspendKrate.Mutable<T?>.withDefault(
+    fun <T : Any> StateFlowSuspendMutableKrate<T?>.withDefault(
         factory: ValueFactory<T>
-    ): StateFlowSuspendKrate.Mutable<T> {
+    ): StateFlowSuspendMutableKrate<T> {
         return DefaultSuspendMutableKrate(
             factory = factory,
             loader = { loadAndGet() },
@@ -99,9 +103,9 @@ object KrateDefaultExt {
     }
 
     /**
-     * convert nullable [FlowKrate.Mutable] to type-safe via decorating [DefaultFlowMutableKrate]
+     * convert nullable [FlowMutableKrate] to type-safe via decorating [DefaultFlowMutableKrate]
      */
-    fun <T : Any> FlowKrate.Mutable<T?>.withDefault(factory: ValueFactory<T>): FlowKrate.Mutable<T> {
+    fun <T : Any> FlowMutableKrate<T?>.withDefault(factory: ValueFactory<T>): FlowMutableKrate<T> {
         return DefaultFlowMutableKrate(
             factory = factory,
             loader = { flow },
