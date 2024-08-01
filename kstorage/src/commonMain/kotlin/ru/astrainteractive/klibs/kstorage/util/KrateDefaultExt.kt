@@ -2,8 +2,8 @@ package ru.astrainteractive.klibs.kstorage.util
 
 import ru.astrainteractive.klibs.kstorage.api.Krate
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
-import ru.astrainteractive.klibs.kstorage.api.coroutine.StateFlowKrate
-import ru.astrainteractive.klibs.kstorage.api.coroutine.StateFlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.api.flow.StateFlowKrate
+import ru.astrainteractive.klibs.kstorage.api.flow.StateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory

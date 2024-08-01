@@ -1,4 +1,4 @@
-package ru.astrainteractive.klibs.kstorage.api.coroutine
+package ru.astrainteractive.klibs.kstorage.api.flow
 
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
 

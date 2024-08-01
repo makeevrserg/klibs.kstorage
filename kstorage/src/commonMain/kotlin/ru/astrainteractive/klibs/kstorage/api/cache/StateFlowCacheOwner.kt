@@ -2,7 +2,10 @@ package ru.astrainteractive.klibs.kstorage.api.cache
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface CoroutineCacheOwner<T> : CacheOwner<T> {
+/**
+ * [StateFlowCacheOwner] will cache last loaded value into [StateFlowCacheOwner.cachedStateFlow]
+ */
+interface StateFlowCacheOwner<T> : CacheOwner<T> {
     /**
      * Current state of a [cachedValue]
      */

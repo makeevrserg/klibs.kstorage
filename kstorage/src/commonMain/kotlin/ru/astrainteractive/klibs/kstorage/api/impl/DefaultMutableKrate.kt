@@ -1,6 +1,5 @@
 package ru.astrainteractive.klibs.kstorage.api.impl
 
-import kotlinx.coroutines.flow.SharingStarted
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
 import ru.astrainteractive.klibs.kstorage.api.cache.LoadingStarted
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
@@ -23,13 +22,13 @@ class DefaultMutableKrate<T>(
         LoadingStarted.Instantly -> loader.loadAndGet() ?: factory.create()
         LoadingStarted.Manually -> factory.create()
     }
+
     override val cachedValue: T
         get() = _cachedValue
 
     override fun loadAndGet(): T {
         val newValue = loader.loadAndGet() ?: factory.create()
         _cachedValue = newValue
-        SharingStarted
         return newValue
     }
 

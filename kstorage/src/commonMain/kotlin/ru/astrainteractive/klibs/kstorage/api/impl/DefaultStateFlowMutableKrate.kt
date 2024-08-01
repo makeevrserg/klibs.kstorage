@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import ru.astrainteractive.klibs.kstorage.api.cache.LoadingStarted
-import ru.astrainteractive.klibs.kstorage.api.coroutine.StateFlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.api.flow.StateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.api.value.ValueLoader
 import ru.astrainteractive.klibs.kstorage.api.value.ValueSaver
