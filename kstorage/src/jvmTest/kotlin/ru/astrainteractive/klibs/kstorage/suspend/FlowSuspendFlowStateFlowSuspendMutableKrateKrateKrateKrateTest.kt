@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
  * 3. Factory value is one, the loader is another
  * 4. Factory value is null,m the loader is null
  */
-internal class FlowMutableKrateTest {
+internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
     @Test
     fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default() = runTest {
         val factoryValue = 10

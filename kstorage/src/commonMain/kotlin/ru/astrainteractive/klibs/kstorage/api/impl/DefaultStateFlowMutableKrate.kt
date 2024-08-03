@@ -4,10 +4,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import ru.astrainteractive.klibs.kstorage.api.StateFlowKrate
-import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
-import ru.astrainteractive.klibs.kstorage.api.provider.ValueLoader
-import ru.astrainteractive.klibs.kstorage.api.provider.ValueSaver
+import ru.astrainteractive.klibs.kstorage.api.cache.LoadingStarted
+import ru.astrainteractive.klibs.kstorage.api.flow.StateFlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.api.value.ValueLoader
+import ru.astrainteractive.klibs.kstorage.api.value.ValueSaver
 
 /**
  * This [DefaultStateFlowMutableKrate] can be used with delegation
@@ -18,9 +19,13 @@ class DefaultStateFlowMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val saver: ValueSaver<T> = ValueSaver.Empty(),
     private val loader: ValueLoader<T>,
-) : StateFlowKrate.Mutable<T> {
+    loadingStarted: LoadingStarted = LoadingStarted.Instantly
+) : StateFlowMutableKrate<T> {
 
-    private val _stateFlow = MutableStateFlow(loader.loadAndGet() ?: factory.create())
+    private val _stateFlow = when (loadingStarted) {
+        LoadingStarted.Instantly -> loader.loadAndGet() ?: factory.create()
+        LoadingStarted.Manually -> factory.create()
+    }.let(::MutableStateFlow)
 
     override val cachedStateFlow: StateFlow<T> = _stateFlow.asStateFlow()
 

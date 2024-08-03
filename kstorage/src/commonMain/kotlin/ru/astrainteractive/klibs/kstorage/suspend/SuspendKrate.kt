@@ -1,13 +1,14 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
-import ru.astrainteractive.klibs.kstorage.api.CachedKrate
+import ru.astrainteractive.klibs.kstorage.api.Krate
+import ru.astrainteractive.klibs.kstorage.api.cache.CacheOwner
 
-interface SuspendKrate<T> : CachedKrate<T> {
+/**
+ * Same as [Krate], [SuspendKrate] is a wrapper for your favorite key-value storage library
+ */
+interface SuspendKrate<T> : CacheOwner<T> {
+    /**
+     * Load value from storage and update [cachedValue]
+     */
     suspend fun loadAndGet(): T
-
-    interface Mutable<T> : SuspendKrate<T> {
-        suspend fun save(value: T)
-
-        suspend fun reset()
-    }
 }

@@ -1,4 +1,4 @@
-package ru.astrainteractive.klibs.kstorage.suspend
+package ru.astrainteractive.klibs.kstorage.suspend.flow
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import ru.astrainteractive.klibs.kstorage.suspend.SuspendKrate
 
 interface FlowKrate<T> : SuspendKrate<T> {
     val flow: Flow<T>
@@ -18,6 +19,4 @@ interface FlowKrate<T> : SuspendKrate<T> {
 
     val CoroutineScope.stateFlow: StateFlow<T>
         get() = stateFlow(coroutineScope = this)
-
-    interface Mutable<T> : FlowKrate<T>, SuspendKrate.Mutable<T>
 }

@@ -10,16 +10,16 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
-import ru.astrainteractive.klibs.kstorage.suspend.FlowKrate
-import ru.astrainteractive.klibs.kstorage.suspend.provider.FlowProvider
-import ru.astrainteractive.klibs.kstorage.suspend.provider.SuspendValueSaver
+import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.suspend.flow.FlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.value.FlowProvider
+import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver
 
 class DefaultFlowMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: FlowProvider<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty()
-) : FlowKrate.Mutable<T> {
+) : FlowMutableKrate<T> {
     private var _cachedValue: T = factory.create()
     override val cachedValue: T
         get() = _cachedValue

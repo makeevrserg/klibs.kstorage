@@ -33,15 +33,17 @@ class SettingsApi(private val settings: Settings) {
         loader = { settings["INT_KEY"] },
         saver = { value -> settings["INT_KEY"] = value }
     )
+
     // Or create class
     class IntKrate(
         key: String,
         settings: Settings
-    ) : Krate.Mutable<Int?> by DefaultMutableKrate<Int?>(
+    ) : MutableKrate<Int?> by DefaultMutableKrate<Int?>(
         factory = { null },
         saver = { value -> settings[key] = value },
         loader = { settings[key] }
     )
+
     // And register just like that
     val mutableKrate2 = IntKrate("KEY", settings)
 }
@@ -63,14 +65,14 @@ class SettingsApi(private val settings: Settings) {
     private class CustomClassKrate(
         key: String,
         factory: ValueFactory<CustomClass>
-    ) : Krate.Mutable<CustomClass> by DefaultMutableKrate(
+    ) : MutableKrate<CustomClass> by DefaultMutableKrate(
         factory = factory,
         loader = { settings[key]?.let(::CustomClass) },
         saver = { customClass -> settings[key] = customClass.customInt }
     )
 
     // Register krate
-    val customKrate: Krate.Mutable<CustomClass> = CustomClassKrate(
+    val customKrate: MutableKrate<CustomClass> = CustomClassKrate(
         key = "CUSTOM_KEY",
         factory = { CustomClass(100) }
     )
@@ -92,14 +94,14 @@ class SettingsApi(private val settings: Settings) {
     // Create custom nullable parser for your krate
     private class CustomClassKrate(
         key: String,
-    ) : Krate.Mutable<CustomClass?> by DefaultMutableKrate(
+    ) : MutableKrate<CustomClass?> by DefaultMutableKrate(
         factory = { null },
         loader = { settings[key]?.let(::CustomClass) },
         saver = { customClass -> settings[key] = customClass?.customInt }
     )
 
     // Register krate with default parameter
-    val customKrate: Krate.Mutable<CustomClass> = CustomClassKrate(
+    val customKrate: MutableKrate<CustomClass> = CustomClassKrate(
         key = "CUSTOM_KEY",
     ).withDefault { CustomClass(15) }
 }
@@ -115,7 +117,7 @@ class SettingsApi(private val dataStore: DataStore<Preferences>) {
         key: Preferences.Key<T>,
         dataStore: DataStore<Preferences>,
         factory: ValueFactory<T>,
-    ) : FlowKrate.Mutable<T> by DefaultFlowMutableKrate(
+    ) : FlowMutableKrate<T> by DefaultFlowMutableKrate(
         factory = factory,
         loader = { dataStore.data.map { it[key] } },
         saver = { value ->

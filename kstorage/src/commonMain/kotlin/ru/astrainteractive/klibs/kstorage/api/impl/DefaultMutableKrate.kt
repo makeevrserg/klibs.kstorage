@@ -1,9 +1,10 @@
 package ru.astrainteractive.klibs.kstorage.api.impl
 
-import ru.astrainteractive.klibs.kstorage.api.Krate
-import ru.astrainteractive.klibs.kstorage.api.provider.ValueFactory
-import ru.astrainteractive.klibs.kstorage.api.provider.ValueLoader
-import ru.astrainteractive.klibs.kstorage.api.provider.ValueSaver
+import ru.astrainteractive.klibs.kstorage.api.MutableKrate
+import ru.astrainteractive.klibs.kstorage.api.cache.LoadingStarted
+import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.api.value.ValueLoader
+import ru.astrainteractive.klibs.kstorage.api.value.ValueSaver
 
 /**
  * This [DefaultMutableKrate] can be used with delegation
@@ -14,9 +15,14 @@ class DefaultMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val saver: ValueSaver<T> = ValueSaver.Empty(),
     private val loader: ValueLoader<T>,
-) : Krate.Mutable<T> {
+    loadingStarted: LoadingStarted = LoadingStarted.Instantly
+) : MutableKrate<T> {
 
-    private var _cachedValue: T = loader.loadAndGet() ?: factory.create()
+    private var _cachedValue: T = when (loadingStarted) {
+        LoadingStarted.Instantly -> loader.loadAndGet() ?: factory.create()
+        LoadingStarted.Manually -> factory.create()
+    }
+
     override val cachedValue: T
         get() = _cachedValue
 
