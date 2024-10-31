@@ -4,6 +4,7 @@ import ru.astrainteractive.klibs.kstorage.api.MutableKrate
 import ru.astrainteractive.klibs.kstorage.api.cache.CacheOwner
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendKrate
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
+import kotlin.reflect.KProperty
 
 object KrateExt {
     /**
@@ -57,4 +58,8 @@ object KrateExt {
         save(newValue)
         return newValue
     }
+}
+
+operator fun <T> CacheOwner<T>.getValue(thisRef: Any, property: KProperty<*>): T {
+    return this.cachedValue
 }
