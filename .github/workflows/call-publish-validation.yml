@@ -18,9 +18,7 @@ jobs:
     strategy:
       matrix:
         target:
-          - ":build-logic:plugins:android:publishToMavenLocal"
-          - ":build-logic:plugins:convention:publishToMavenLocal"
-          - ":build-logic:plugins:minecraft:publishToMavenLocal"
+          - "publishToMavenLocal"
     name: "Try publish local"
     runs-on: ubuntu-latest
     env:
