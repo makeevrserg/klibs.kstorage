@@ -17,4 +17,4 @@ jobs:
       - name: detekt
         uses: gradle/gradle-build-action@v3
         with:
-          arguments: :build-logic:detekt
+          arguments: detekt
