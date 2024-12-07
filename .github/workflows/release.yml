@@ -1,0 +1,20 @@
+name: Release
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  gradle_validation:
+    name: Validate gradle wrapper
+    uses: ./.github/workflows/call-gradle-wrapper-validation.yml
+  release:
+    name: Release
+    needs: gradle_validation
+    uses: ./.github/workflows/call-release.yml
+    secrets:
+      ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME: ${{ secrets.ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME }}
+      ORG_GRADLE_PROJECT_MAVENCENTRALPASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_mavenCentralPassword }}
+      ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEY: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEY }}
+      ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYID: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYID }}
+      ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYPASSWORD: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYPASSWORD }}
