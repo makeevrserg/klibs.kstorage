@@ -40,6 +40,9 @@ jobs:
     needs: [ publish ]
     name: Create GitHub release
     runs-on: ubuntu-latest
+    # Only for personal repositories
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       # steps.properties.outputs.project-version-string
