@@ -1,4 +1,4 @@
-name: "Test publish"
+name: "Release version"
 on:
   workflow_call:
     secrets:
@@ -15,7 +15,7 @@ on:
 
 jobs:
   publish:
-    name: "Try publish local"
+    name: "Publish on MavenCentral"
     runs-on: ubuntu-latest
     env:
       ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME }}
@@ -38,7 +38,7 @@ jobs:
           arguments: publishAndReleaseToMavenCentral --stacktrace
   release:
     needs: [ publish ]
-    name: Create release
+    name: Create GitHub release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +55,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
         with:
-          tag_name: ${{ steps.properties.outputs.project-version-string }}
-          name: ${{ steps.properties.outputs.project-name }} - ${{ steps.properties.outputs.project-version-string }}
+          tag_name: ${{ steps.properties.outputs.makeevrserg-project-version-string }}
+          name: ${{ steps.properties.outputs.makeevrserg-project-name }} - ${{ steps.properties.outputs.makeevrserg-project-version-string }}
           draft: false
           prerelease: false
