@@ -20,7 +20,7 @@ jobs:
         target:
           - "publishToMavenLocal"
     name: "Validate local publish"
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
     env:
       ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME }}
       ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.ORG_GRADLE_PROJECT_MAVENCENTRALPASSWORD }}
