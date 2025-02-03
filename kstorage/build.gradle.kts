@@ -28,6 +28,9 @@ kotlin {
     macosArm64()
     mingwX64()
     applyDefaultHierarchyTemplate()
+    wasmJs {
+        browser()
+    }
 
     sourceSets {
         /* Main source sets */
