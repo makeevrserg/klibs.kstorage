@@ -2,7 +2,7 @@
 # Kotlin
 kotlin-version = "2.1.20" # # https://github.com/JetBrains/kotlin
 kotlin-coroutines-core = "1.10.1" # https://github.com/Kotlin/kotlinx.coroutines
-klibs-gradleplugin = "1.6.0" # https://github.com/makeevrserg/gradle-plugin
+klibs-gradleplugin = "1.6.13" # https://github.com/makeevrserg/gradle-plugin
 gradle-android = "8.9.1" # https://developer.android.com/build#top-level
 androidx-datastore = "1.1.4" # https://developer.android.com/topic/libraries/architecture/datastore
 [libraries]
