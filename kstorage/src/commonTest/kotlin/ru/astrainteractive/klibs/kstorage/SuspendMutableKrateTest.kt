@@ -25,8 +25,7 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
-            loader = { null },
-            coroutineContext = coroutineContext
+            loader = { null }
         )
         assertEquals(factoryValue, krate.cachedValue)
         assertEquals(factoryValue, krate.loadAndGet())
@@ -40,8 +39,7 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { null },
             saver = { store.put("KEY", it) },
-            loader = { loaderValue },
-            coroutineContext = coroutineContext
+            loader = { loaderValue }
         )
         assertEquals(null, krate.cachedValue)
         assertEquals(loaderValue, krate.loadAndGet())
@@ -56,8 +54,7 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
-            loader = { loaderValue },
-            coroutineContext = coroutineContext
+            loader = { loaderValue }
         )
         assertEquals(factoryValue, krate.cachedValue)
         assertEquals(loaderValue, krate.loadAndGet())
@@ -71,8 +68,7 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
-            loader = { store.get("KEY") },
-            coroutineContext = coroutineContext
+            loader = { store.get("KEY") }
         )
         assertEquals(factoryValue, krate.cachedValue)
         assertEquals(factoryValue, krate.loadAndGet())
@@ -94,8 +90,7 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
-            loader = { store.get("KEY") },
-            coroutineContext = coroutineContext
+            loader = { store.get("KEY") }
         )
         assertEquals(factoryValue, krate.cachedValue)
         assertEquals(defaultStoreValue, krate.loadAndGet())
@@ -118,8 +113,7 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { },
-            loader = { loadedValue },
-            coroutineContext = coroutineContext
+            loader = { loadedValue }
         )
 
         assertEquals(

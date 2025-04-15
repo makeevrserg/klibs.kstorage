@@ -60,8 +60,8 @@ class DefaultFlowMutableKrate<T>(
 
     init {
         val scope = CoroutineScope(EmptyCoroutineContext)
-        scope
-            .launch(coroutineContext) { loadAndGet() }
-            .invokeOnCompletion { scope.cancel() }
+        scope.launch(coroutineContext) {
+            loadAndGet()
+        }.invokeOnCompletion { scope.cancel() }
     }
 }
