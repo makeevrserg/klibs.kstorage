@@ -7,6 +7,7 @@ import ru.astrainteractive.klibs.kstorage.api.flow.StateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendKrate
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.flow.FlowKrate
@@ -14,6 +15,7 @@ import ru.astrainteractive.klibs.kstorage.suspend.flow.FlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.flow.StateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrate
+import kotlin.coroutines.CoroutineContext
 
 object KrateDefaultExt {
     /**
@@ -61,21 +63,29 @@ object KrateDefaultExt {
     /**
      * convert nullable [FlowKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
      */
-    fun <T : Any> SuspendKrate<T?>.withDefault(factory: ValueFactory<T>): SuspendKrate<T> {
+    fun <T : Any> SuspendKrate<T?>.withDefault(
+        factory: ValueFactory<T>,
+        coroutineContext: CoroutineContext = getIoDispatcher()
+    ): SuspendKrate<T> {
         return DefaultSuspendMutableKrate(
             factory = factory,
-            loader = { loadAndGet() }
+            loader = { loadAndGet() },
+            coroutineContext = coroutineContext
         )
     }
 
     /**
      * convert nullable [SuspendMutableKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
      */
-    fun <T : Any> SuspendMutableKrate<T?>.withDefault(factory: ValueFactory<T>): SuspendMutableKrate<T> {
+    fun <T : Any> SuspendMutableKrate<T?>.withDefault(
+        factory: ValueFactory<T>,
+        coroutineContext: CoroutineContext = getIoDispatcher()
+    ): SuspendMutableKrate<T> {
         return DefaultSuspendMutableKrate(
             factory = factory,
             loader = { loadAndGet() },
-            saver = { value -> save(value) }
+            saver = { value -> save(value) },
+            coroutineContext = coroutineContext
         )
     }
 
@@ -83,33 +93,43 @@ object KrateDefaultExt {
      * convert nullable [StateFlowSuspendMutableKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
      */
     fun <T : Any> StateFlowSuspendMutableKrate<T?>.withDefault(
-        factory: ValueFactory<T>
+        factory: ValueFactory<T>,
+        coroutineContext: CoroutineContext = getIoDispatcher()
     ): StateFlowSuspendMutableKrate<T> {
         return DefaultSuspendMutableKrate(
             factory = factory,
             loader = { loadAndGet() },
-            saver = { value -> save(value) }
+            saver = { value -> save(value) },
+            coroutineContext = coroutineContext
         )
     }
 
     /**
      * convert nullable [FlowKrate] to type-safe via decorating [DefaultFlowMutableKrate]
      */
-    fun <T : Any> FlowKrate<T?>.withDefault(factory: ValueFactory<T>): FlowKrate<T> {
+    fun <T : Any> FlowKrate<T?>.withDefault(
+        factory: ValueFactory<T>,
+        coroutineContext: CoroutineContext = getIoDispatcher()
+    ): FlowKrate<T> {
         return DefaultFlowMutableKrate(
             factory = factory,
-            loader = { flow }
+            loader = { flow },
+            coroutineContext = coroutineContext
         )
     }
 
     /**
      * convert nullable [FlowMutableKrate] to type-safe via decorating [DefaultFlowMutableKrate]
      */
-    fun <T : Any> FlowMutableKrate<T?>.withDefault(factory: ValueFactory<T>): FlowMutableKrate<T> {
+    fun <T : Any> FlowMutableKrate<T?>.withDefault(
+        factory: ValueFactory<T>,
+        coroutineContext: CoroutineContext
+    ): FlowMutableKrate<T> {
         return DefaultFlowMutableKrate(
             factory = factory,
             loader = { flow },
-            saver = { value -> save(value) }
+            saver = { value -> save(value) },
+            coroutineContext = coroutineContext
         )
     }
 }
