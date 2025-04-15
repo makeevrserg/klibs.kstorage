@@ -33,13 +33,11 @@ kotlin {
     }
 
     sourceSets {
-        /* Main source sets */
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlin.coroutines.core)
             }
         }
-        /* Test source sets */
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -51,6 +49,18 @@ kotlin {
                 implementation(libs.androidx.datastore.preferences.core)
                 implementation(libs.androidx.datastore.core.okio)
             }
+        }
+        val wasmJsMain by getting
+        val jsMain by getting
+        val nonJsMain by creating {
+            this.dependsOn(commonMain)
+            sourceSets.toList()
+                .filter { sourceSet -> sourceSet.name.endsWith("Main") }
+                .filter { sourceSet -> sourceSet.name != wasmJsMain.name }
+                .filter { sourceSet -> sourceSet.name != jsMain.name }
+                .filter { sourceSet -> sourceSet.name != commonMain.name }
+                .onEach { sourceSet -> sourceSet.dependsOn(this) }
+                .toList()
         }
     }
 }

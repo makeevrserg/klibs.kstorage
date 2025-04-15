@@ -2,6 +2,7 @@ package ru.astrainteractive.klibs.kstorage.suspend.impl
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -10,15 +11,20 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
 import ru.astrainteractive.klibs.kstorage.suspend.flow.FlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.FlowProvider
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 class DefaultFlowMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: FlowProvider<T>,
-    private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty()
+    private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
+    coroutineContext: CoroutineContext = getIoDispatcher()
 ) : FlowMutableKrate<T> {
     private var _cachedValue: T = factory.create()
     override val cachedValue: T
@@ -50,5 +56,12 @@ class DefaultFlowMutableKrate<T>(
     override suspend fun reset() {
         val default = factory.create()
         save(default)
+    }
+
+    init {
+        val scope = CoroutineScope(EmptyCoroutineContext)
+        scope
+            .launch(coroutineContext) { loadAndGet() }
+            .invokeOnCompletion { scope.cancel() }
     }
 }

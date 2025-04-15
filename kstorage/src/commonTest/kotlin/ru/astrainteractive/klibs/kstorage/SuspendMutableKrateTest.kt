@@ -1,10 +1,14 @@
 package ru.astrainteractive.klibs.kstorage
 
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.timeout
 import kotlinx.coroutines.test.runTest
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.test.SampleStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Test cases:
@@ -21,7 +25,8 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
-            loader = { null }
+            loader = { null },
+            coroutineContext = coroutineContext
         )
         assertEquals(factoryValue, krate.cachedValue)
         assertEquals(factoryValue, krate.loadAndGet())
@@ -35,7 +40,8 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { null },
             saver = { store.put("KEY", it) },
-            loader = { loaderValue }
+            loader = { loaderValue },
+            coroutineContext = coroutineContext
         )
         assertEquals(null, krate.cachedValue)
         assertEquals(loaderValue, krate.loadAndGet())
@@ -50,7 +56,8 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
-            loader = { loaderValue }
+            loader = { loaderValue },
+            coroutineContext = coroutineContext
         )
         assertEquals(factoryValue, krate.cachedValue)
         assertEquals(loaderValue, krate.loadAndGet())
@@ -64,7 +71,8 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
-            loader = { store.get("KEY") }
+            loader = { store.get("KEY") },
+            coroutineContext = coroutineContext
         )
         assertEquals(factoryValue, krate.cachedValue)
         assertEquals(factoryValue, krate.loadAndGet())
@@ -86,7 +94,8 @@ internal class SuspendMutableKrateTest {
         val krate = DefaultSuspendMutableKrate(
             factory = { factoryValue },
             saver = { store.put("KEY", it) },
-            loader = { store.get("KEY") }
+            loader = { store.get("KEY") },
+            coroutineContext = coroutineContext
         )
         assertEquals(factoryValue, krate.cachedValue)
         assertEquals(defaultStoreValue, krate.loadAndGet())
@@ -100,5 +109,25 @@ internal class SuspendMutableKrateTest {
         krate.reset()
         assertEquals(factoryValue, krate.cachedValue)
         assertEquals(factoryValue, krate.loadAndGet())
+    }
+
+    @Test
+    fun GIVEN_manually_not_loaded_WHEN_getting_cached_THEN_loaded_not_factory() = runTest {
+        val factoryValue = 10
+        val loadedValue = 30
+        val krate = DefaultSuspendMutableKrate(
+            factory = { factoryValue },
+            saver = { },
+            loader = { loadedValue },
+            coroutineContext = coroutineContext
+        )
+
+        assertEquals(
+            expected = loadedValue,
+            actual = krate.cachedStateFlow
+                .filter { value -> value == loadedValue }
+                .timeout(1.seconds)
+                .first()
+        )
     }
 }
