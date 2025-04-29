@@ -10,6 +10,10 @@ internal class SampleStore(filledValues: Map<String, Any?> = emptyMap()) {
         return map[key] as? T
     }
 
+    fun clear() {
+        map.clear()
+    }
+
     init {
         map.putAll(filledValues)
     }

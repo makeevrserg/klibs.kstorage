@@ -3,17 +3,17 @@ package ru.astrainteractive.klibs.kstorage.api.impl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import ru.astrainteractive.klibs.kstorage.api.MutableKrate
-import ru.astrainteractive.klibs.kstorage.api.StateFlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.api.Krate
+import ru.astrainteractive.klibs.kstorage.api.StateFlowKrate
 
 /**
- * This [DefaultStateFlowMutableKrate] can be used with delegation
+ * This [DefaultStateFlowKrate] can be used with delegation
  *
  * If false will put [factory] value into [cachedValue]
  */
-class DefaultStateFlowMutableKrate<T>(
-    private val instance: MutableKrate<T>,
-) : StateFlowMutableKrate<T> {
+class DefaultStateFlowKrate<T>(
+    private val instance: Krate<T>,
+) : StateFlowKrate<T> {
     private var _cachedStateFlow = MutableStateFlow(instance.getValue())
 
     override val cachedStateFlow: StateFlow<T>
@@ -21,16 +21,6 @@ class DefaultStateFlowMutableKrate<T>(
 
     override val cachedValue: T
         get() = cachedStateFlow.value
-
-    override fun save(value: T) {
-        _cachedStateFlow.update { value }
-        instance.save(value)
-    }
-
-    override fun reset() {
-        instance.reset()
-        _cachedStateFlow.update { instance.getValue() }
-    }
 
     override fun getValue(): T {
         val value = instance.getValue()

@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.map
 import okio.FileSystem
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
-import ru.astrainteractive.klibs.kstorage.suspend.flow.FlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
 
 internal class DataStoreFlowMutableKrate<T>(

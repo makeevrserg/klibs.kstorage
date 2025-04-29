@@ -3,17 +3,20 @@
 
 ## KStorage
 
-KStorage is super lightweight Kotlin Multiplatform Storage wrapper library
+KStorage is a lightweight Kotlin Multiplatform library that provides a unified and type-safe interface for key-value
+storage across different platforms. It simplifies the process of storing and retrieving data by abstracting the
+underlying storage mechanisms.
 
-## Installation
+## ✨ Features
 
-Gradle
+- Multiplatform Support: Works across Android, iOS, Jvm and other Kotlin-supported platforms.
+- Type-Safe API: Ensures compile-time type checking for stored values.
+- Lightweight: Minimal overhead with a focus on simplicity and performance.
+- Extensible: Easily integrate with various storage backends.
 
-```kotlin
-implementation("ru.astrainteractive.klibs:kstorage:<version>")
-```
+## 🚀 Installation
 
-Version catalogs
+#### Version catalogs
 
 ```toml
 [versions]
@@ -23,155 +26,157 @@ klibs-kstorage = "<latest-version>"
 klibs-kstorage = { module = "ru.astrainteractive.klibs:kstorage", version.ref = "klibs-kstorage" }
 ```
 
-## Creating MutableKrate
+#### Gradle
 
 ```kotlin
-class SettingsApi(private val settings: Settings) {
-    // Create krate just in place
-    val mutableKrate = DefaultMutableKrate(
+implementation("ru.astrainteractive.klibs:kstorage:<version>")
+// or version catalogs
+implementation(libs.klibs.kstorage)
+```
+
+## 🛠️ Basic Usage
+
+### Blocking API
+
+```kotlin
+class SettingsApi(private val intSettingsMap: MutableMap<String, Int>) {
+    /**
+     * The intSettingsMap["INT_KEY"] may return null
+     * But since we have factory = { 0 }, the krate will be non-null!
+     */
+    val mutableKrate: MutableKrate<Int> = DefaultMutableKrate(
         factory = { 0 },
-        loader = { settings["INT_KEY"] },
-        saver = { value -> settings["INT_KEY"] = value }
+        loader = { intSettingsMap["INT_KEY"] },
+        saver = { value -> intSettingsMap["INT_KEY"] = value }
     )
 
-    // Or create class
-    class IntKrate(
-        key: String,
-        settings: Settings
-    ) : MutableKrate<Int?> by DefaultMutableKrate<Int?>(
+    // Want to cache your value?
+    val cachedMutableKrate: CachedKrate<Int> = mutableKrate.asCachedMutableKrate()
+
+    // Want even more and make it StateFlow?
+    val stateFlowKrate: StateFlowMutableKrate<Int> = mutableKrate.asStateFlowMutableKrate()
+
+    // Have a nullable krate somewhere, but also somewhere need it non-null?
+    val nonNullableMutableKrate: MutableKrate<Int> = DefaultMutableKrate(
         factory = { null },
-        saver = { value -> settings[key] = value },
-        loader = { settings[key] }
-    )
+        loader = { intSettingsMap["INT_KEY"] },
+        saver = { value ->
+            if (value == null) intSettingsMap.remove("INT_KEY")
+            else intSettingsMap["INT_KEY"] = value
+        }
+    ).withDefault { 102 }
 
-    // And register just like that
-    val mutableKrate2 = IntKrate("KEY", settings)
-}
-
-fun callFunction(api: SettingsApi) {
-    api.mutableKrate.loadAndGet()
-    api.mutableKrate.save(12)
-}
-```
-
-## Creating Custom MutableKrate
-
-```kotlin
-class SettingsApi(private val settings: Settings) {
-    // Create custom class for your krate
-    data class CustomClass(val customInt: Int)
-
-    // Create custom type-safe parser for your krate
-    private class CustomClassKrate(
-        key: String,
-        factory: ValueFactory<CustomClass>
-    ) : MutableKrate<CustomClass> by DefaultMutableKrate(
-        factory = factory,
-        loader = { settings[key]?.let(::CustomClass) },
-        saver = { customClass -> settings[key] = customClass.customInt }
-    )
-
-    // Register krate
-    val customKrate: MutableKrate<CustomClass> = CustomClassKrate(
-        key = "CUSTOM_KEY",
-        factory = { CustomClass(100) }
-    )
+    // Don't want to call krate.cachedValue every time? Use delegates!
+    val cachedKrateValue by cachedMutableKrate
+    val cachedStateFlowKrateValue by stateFlowKrate
 }
 ```
 
-## Converting nullable into non-null
+### Suspend API
 
-It also works with StateFlowMutableKrate
-
-This allows you to create parsers **only** for nullable values. After you can easily convert it to
-non-nullable by `withDefault` extension!
+Want suspend-style api? It's almost the same!
 
 ```kotlin
-class SettingsApi(private val settings: Settings) {
-    // Create custom class for your krate
-    data class CustomClass(val customInt: Int)
+class SuspendSettingsApi(private val intSettingsMap: MutableMap<String, Int>) {
+    val suspendMutableKrate: SuspendMutableKrate<Int> = DefaultSuspendMutableKrate(
+        factory = { 0 },
+        loader = { intSettingsMap["INT_KEY"] },
+        saver = { value -> intSettingsMap["INT_KEY"] = value }
+    )
 
-    // Create custom nullable parser for your krate
-    private class CustomClassKrate(
-        key: String,
-    ) : MutableKrate<CustomClass?> by DefaultMutableKrate(
+    val stateFlowSuspendMutableKrate: StateFlowSuspendMutableKrate<Int> = DefaultStateFlowSuspendMutableKrate(
+        factory = { 0 },
+        loader = { intSettingsMap["INT_KEY"] },
+        saver = { value -> intSettingsMap["INT_KEY"] = value }
+    )
+
+    val nonNullableStateFlowSuspendMutableKrate = DefaultStateFlowSuspendMutableKrate(
         factory = { null },
-        loader = { settings[key]?.let(::CustomClass) },
-        saver = { customClass -> settings[key] = customClass?.customInt }
-    )
-
-    // Register krate with default parameter
-    val customKrate: MutableKrate<CustomClass> = CustomClassKrate(
-        key = "CUSTOM_KEY",
-    ).withDefault { CustomClass(15) }
+        loader = { intSettingsMap["INT_KEY"] },
+        saver = { value ->
+            if (value == null) intSettingsMap.remove("INT_KEY")
+            else intSettingsMap["INT_KEY"] = value
+        }
+    ).withDefault { 102 }
 }
 ```
 
-## Don't want to use blocking style? Use it with datastore then or with any suspend library
+### Flow API
+
+Want to use Jetpack DataStore? There's Flow API for your needs!
+
+You can even integrate it with ROOM or on-disk files if you want!
 
 ```kotlin
-class SettingsApi(private val dataStore: DataStore<Preferences>) {
+class FlowApi {
+    private val key = intPreferencesKey("KEY_2")
 
-    // Wrap any library with custom implementation, DataStore for example
-    internal class DataStoreFlowMutableKrate<T>(
-        key: Preferences.Key<T>,
-        dataStore: DataStore<Preferences>,
-        factory: ValueFactory<T>,
-    ) : FlowMutableKrate<T> by DefaultFlowMutableKrate(
-        factory = factory,
+    // Create Jetpack DataStore instance
+    private val dataStore: DataStore<Preferences> = PreferenceDataStoreFactory.createWithPath {
+        val path = FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "$key.preferences_pb"
+        val file = path.toFile()
+        if (file.exists()) file.delete()
+        path
+    }
+
+    // Create your krate
+    val flowKrate = DefaultFlowMutableKrate(
+        factory = { 10 },
         loader = { dataStore.data.map { it[key] } },
         saver = { value ->
             dataStore.edit { preferences ->
-                if (value == null) preferences.remove(key)
-                else preferences[key] = value
+                preferences[key] = value
             }
         }
     )
 
-    // Initialize krate value
-    val intKrate = DataStoreFlowMutableKrate<Int?>(
-        key = intPreferencesKey("some_int_key"),
-        dataStore = dataStore,
-        factory = { null }
-    ).withDefault(12)
-}
-
-suspend fun callFunction(api: SettingsApi) {
-    api.intKrate.getValue()
-    api.intKrate.save(12)
+    // Make it StateFlow if you need
+    val stateFlowValue = flowKrate.stateFlow(GlobalScope)
 }
 ```
 
-## Extensions
+## 🧪 Advanced usage
+
+### 🏷️ Class-based Krate Example
 
 ```kotlin
-val mutableKrate: MutableKrate<Int> = TODO()
-val suspendMutableKrate: SuspendMutableKrate<Int> = TODO()
-// Reset to default and get a new value
-mutableKrate.resetAndGet()
-suspendMutableKrate.resetAndGet()
-// Update with a reference to current value
-mutableKrate.update { value -> value + 1 }
-suspendMutableKrate.update { value -> value + 1 }
-// Update with a reference to current value and get 
-mutableKrate.updateAndGet { value -> value + 1 }
-suspendMutableKrate.updateAndGet { value -> value + 1 }
+class IntKrate(
+    key: String,
+    settingsMap: MutableMap<String, Int>
+) : MutableKrate<Int?> by DefaultMutableKrate(
+    factory = { null },
+    loader = { settingsMap[key] },
+    saver = { value -> settingsMap[key] = value }
+)
 ```
 
-That's it! As easy as it looks
+### 🧱 Custom Data Type Example
 
-## Storage Components
+```kotlin
+data class CustomClass(val number: Int)
 
-#### Blocking
+class CustomClassKrate(
+    key: String,
+    settingsMap: MutableMap<String, Int>
+) : MutableKrate<CustomClass> by DefaultMutableKrate(
+    factory = { CustomClass(0) },
+    loader = {
+        val intValue = settingsMap[key]
+        if (intValue != null) CustomClass(intValue)
+        else null
+    },
+    saver = { value -> settings[key] = value.number }
+)
+```
 
-- `Krate` - Default read-only krate
-- `StateFlowKrate` - Read-only krate with StateFlow
-- `MutableKrate` - Mutable read-write krate
-- `StateFlowMutableKrate` - Mutable read-write krate with StateFlow
+### 🔄 Dynamic Keys
 
-#### Suspend
-
-- `SuspendKrate` - Default suspend read-only krate
-- `FlowKrate` - Read-only suspend krate with Flow
-- `SuspendMutableKrate` - Mutable suspend read-write krate
-- `FlowMutableKrate` - Mutable suspend read-write krate with Flow
+```kotlin
+fun krateForUser(userId: String): MutableKrate<Int> {
+    return DefaultMutableKrate(
+        factory = { 0 },
+        loader = { settings[userId] ?: 0 },
+        saver = { value -> settings[key] = value }
+    )
+}
+```
