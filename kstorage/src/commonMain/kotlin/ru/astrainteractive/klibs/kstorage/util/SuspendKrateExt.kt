@@ -17,7 +17,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KProperty
 
 /**
- * This will call [SuspendMutableKrate.reset] and return first [SuspendKrate.getValue]
+ * Suspends while resetting the Krate to its default value and returns the new value.
  */
 suspend fun <T> SuspendMutableKrate<T>.resetAndGet(): T {
     reset()
@@ -25,7 +25,7 @@ suspend fun <T> SuspendMutableKrate<T>.resetAndGet(): T {
 }
 
 /**
- * Save value with a reference to current
+ * Suspends while retrieving the current value, transforms it using the suspend block, and saves the result.
  */
 suspend fun <T> SuspendMutableKrate<T>.update(block: suspend (T) -> T) {
     val oldValue = getValue()
@@ -34,7 +34,7 @@ suspend fun <T> SuspendMutableKrate<T>.update(block: suspend (T) -> T) {
 }
 
 /**
- * Save value with a reference to current and return new value
+ * Suspends while transforming the current value using the suspend block, saves it, and returns the new value.
  */
 suspend fun <T> SuspendMutableKrate<T>.updateAndGet(block: suspend (T) -> T): T {
     val oldValue = getValue()
@@ -44,7 +44,7 @@ suspend fun <T> SuspendMutableKrate<T>.updateAndGet(block: suspend (T) -> T): T 
 }
 
 /**
- * convert nullable [FlowKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
+ * Converts a nullable SuspendKrate into a non-nullable one by using a fallback factory when null is encountered.
  */
 fun <T : Any> SuspendKrate<T?>.withDefault(
     factory: ValueFactory<T>,
@@ -56,7 +56,7 @@ fun <T : Any> SuspendKrate<T?>.withDefault(
 }
 
 /**
- * convert nullable [SuspendMutableKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
+ * Converts a nullable SuspendMutableKrate into a non-nullable one by providing a default via the given factory.
  */
 fun <T : Any> SuspendMutableKrate<T?>.withDefault(
     factory: ValueFactory<T>,
@@ -69,7 +69,7 @@ fun <T : Any> SuspendMutableKrate<T?>.withDefault(
 }
 
 /**
- * convert nullable [StateFlowSuspendMutableKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
+ * Adds a default value fallback to a nullable StateFlowSuspendKrate, producing a non-nullable variant.
  */
 fun <T : Any> StateFlowSuspendKrate<T?>.withDefault(
     factory: ValueFactory<T>,
@@ -83,7 +83,7 @@ fun <T : Any> StateFlowSuspendKrate<T?>.withDefault(
 }
 
 /**
- * convert nullable [StateFlowSuspendMutableKrate] to type-safe via decorating [DefaultSuspendMutableKrate]
+ * Adds a default value fallback to a nullable StateFlowSuspendMutableKrate, returning a non-nullable variant.
  */
 fun <T : Any> StateFlowSuspendMutableKrate<T?>.withDefault(
     factory: ValueFactory<T>,
@@ -98,7 +98,7 @@ fun <T : Any> StateFlowSuspendMutableKrate<T?>.withDefault(
 }
 
 /**
- * convert nullable [FlowKrate] to type-safe via decorating [DefaultFlowMutableKrate]
+ * Converts a nullable FlowKrate to a non-nullable one by applying a default factory.
  */
 fun <T : Any> FlowKrate<T?>.withDefault(
     factory: ValueFactory<T>,
@@ -110,7 +110,7 @@ fun <T : Any> FlowKrate<T?>.withDefault(
 }
 
 /**
- * convert nullable [FlowMutableKrate] to type-safe via decorating [DefaultFlowMutableKrate]
+ * Converts a nullable FlowMutableKrate to a non-nullable one by using a default factory.
  */
 fun <T : Any> FlowMutableKrate<T?>.withDefault(
     factory: ValueFactory<T>,
@@ -122,10 +122,16 @@ fun <T : Any> FlowMutableKrate<T?>.withDefault(
     )
 }
 
+/**
+ * Enables Kotlin property delegation to access the current value of a StateFlowSuspendKrate.
+ */
 operator fun <T> StateFlowSuspendKrate<T>.getValue(thisRef: Any, property: KProperty<*>): T {
     return this.cachedStateFlow.value
 }
 
+/**
+ * Converts a nullable suspend-based MutableKrate into a StateFlowSuspendMutableKrate for reactive value observation.
+ */
 fun <T : Any> SuspendMutableKrate<T?>.asStateFlowMutableKrate(
     coroutineContext: CoroutineContext = getIoDispatcher()
 ): StateFlowSuspendMutableKrate<T?> {

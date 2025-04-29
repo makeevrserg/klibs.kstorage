@@ -15,7 +15,7 @@ import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import kotlin.reflect.KProperty
 
 /**
- * This will call [MutableKrate] and return [CacheOwner.cachedValue]
+ * Resets the Krate value to its default (via factory) and returns the new value.
  */
 fun <T> MutableKrate<T>.resetAndGet(): T {
     reset()
@@ -23,7 +23,7 @@ fun <T> MutableKrate<T>.resetAndGet(): T {
 }
 
 /**
- * Save value with a reference to current
+ * Applies a transformation to the current value using the provided block and saves the result.
  */
 fun <T> MutableKrate<T>.update(block: (T) -> T) {
     val oldValue = getValue()
@@ -32,7 +32,7 @@ fun <T> MutableKrate<T>.update(block: (T) -> T) {
 }
 
 /**
- * Save value with a reference to current and return new value
+ * Applies a transformation to the current value, saves the result, and returns the updated value.
  */
 fun <T> MutableKrate<T>.updateAndGet(block: (T) -> T): T {
     val oldValue = getValue()
@@ -42,7 +42,7 @@ fun <T> MutableKrate<T>.updateAndGet(block: (T) -> T): T {
 }
 
 /**
- * convert nullable [Krate] to type-safe via decorating [DefaultMutableKrate]
+ * Converts a nullable Krate into a non-nullable one by supplying a default value via factory.
  */
 fun <T : Any> Krate<T?>.withDefault(factory: ValueFactory<T>): Krate<T> {
     return DefaultMutableKrate(
@@ -52,7 +52,7 @@ fun <T : Any> Krate<T?>.withDefault(factory: ValueFactory<T>): Krate<T> {
 }
 
 /**
- * convert nullable [ Krate.Mutable] to type-safe via decorating [DefaultMutableKrate]
+ * Converts a nullable MutableKrate into a non-nullable one using a fallback factory.
  */
 fun <T : Any> MutableKrate<T?>.withDefault(factory: ValueFactory<T>): MutableKrate<T> {
     return DefaultMutableKrate(
@@ -62,22 +62,37 @@ fun <T : Any> MutableKrate<T?>.withDefault(factory: ValueFactory<T>): MutableKra
     )
 }
 
+/**
+ * Allows Kotlin's property delegation syntax to access the cached value of a CachedKrate.
+ */
 operator fun <T> CachedKrate<T>.getValue(thisRef: Any, property: KProperty<*>): T {
     return this.cachedValue
 }
 
+/**
+ * Wraps a regular Krate into a CachedKrate to cache its value in memory for faster access.
+ */
 fun <T> Krate<T>.asCachedKrate(): CachedKrate<T> {
     return DefaultCachedKrate(this)
 }
 
+/**
+ * Wraps a MutableKrate into a CachedMutableKrate to allow mutation and in-memory caching.
+ */
 fun <T> MutableKrate<T>.asCachedMutableKrate(): CachedMutableKrate<T> {
     return DefaultCachedMutableKrate(this)
 }
 
+/**
+ * Wraps a Krate into a StateFlowKrate, exposing its value as a reactive StateFlow.
+ */
 fun <T> Krate<T>.asStateFlowKrate(): StateFlowKrate<T> {
     return DefaultStateFlowKrate(this)
 }
 
+/**
+ * Wraps a MutableKrate into a StateFlowMutableKrate to support reactive value observation and mutation.
+ */
 fun <T> MutableKrate<T>.asStateFlowMutableKrate(): StateFlowMutableKrate<T> {
     return DefaultStateFlowMutableKrate(this)
 }

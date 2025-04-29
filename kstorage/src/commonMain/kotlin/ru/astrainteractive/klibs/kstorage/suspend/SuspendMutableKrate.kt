@@ -1,19 +1,19 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
-import ru.astrainteractive.klibs.kstorage.api.MutableKrate
-
 /**
- * Same as [MutableKrate], [SuspendMutableKrate] allows you to save/load values from your storage without
- * depending on SharedPreferences or other library
+ * Represents a mutable Krate that supports asynchronous read and write operations.
+ * This interface extends [SuspendKrate], adding the ability to save and reset values
+ * in an asynchronous manner, making it suitable for use cases that involve I/O operations.
  */
 interface SuspendMutableKrate<T> : SuspendKrate<T> {
+
     /**
-     * Save new value into storage and update current
+     * Suspends while saving the given value to the underlying storage.
      */
     suspend fun save(value: T)
 
     /**
-     * Reset value to default
+     * Suspends while resetting the stored value to its default or initial state.
      */
     suspend fun reset()
 }
