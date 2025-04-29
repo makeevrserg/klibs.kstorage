@@ -1,18 +1,12 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
 import androidx.datastore.preferences.core.intPreferencesKey
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import ru.astrainteractive.klibs.kstorage.suspend.test.DataStoreFlowMutableKrate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Test cases:
- * 1. Factory value not null, loader is null.
- * 2. Factory value is null, loader not null
- * 3. Factory value is one, the loader is another
- * 4. Factory value is null,m the loader is null
- */
 internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
     @Test
     fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default() = runTest {
@@ -21,9 +15,10 @@ internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
             factory = { factoryValue },
             key = intPreferencesKey("KEY_1")
         )
-        assertEquals(factoryValue, krate.cachedValue)
-        assertEquals(factoryValue, krate.loadAndGet())
-        assertEquals(factoryValue, krate.cachedValue)
+        val stateFlow = krate.stateFlow(TestScope())
+        assertEquals(factoryValue, stateFlow.value)
+        assertEquals(factoryValue, krate.getValue())
+        assertEquals(factoryValue, stateFlow.value)
     }
 
     @Test
@@ -33,9 +28,10 @@ internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
             factory = { factoryValue },
             key = intPreferencesKey("KEY_2")
         )
-        assertEquals(factoryValue, krate.cachedValue)
-        assertEquals(factoryValue, krate.loadAndGet())
-        assertEquals(factoryValue, krate.cachedValue)
+        val stateFlow = krate.stateFlow(TestScope())
+        assertEquals(factoryValue, stateFlow.value)
+        assertEquals(factoryValue, krate.getValue())
+        assertEquals(factoryValue, stateFlow.value)
     }
 
     @Test
@@ -45,16 +41,17 @@ internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
             factory = { factoryValue },
             key = intPreferencesKey("KEY_3")
         )
-        assertEquals(factoryValue, krate.cachedValue)
-        assertEquals(factoryValue, krate.loadAndGet())
+        val stateFlow = krate.stateFlow(TestScope())
+        assertEquals(factoryValue, stateFlow.value)
+        assertEquals(factoryValue, krate.getValue())
         11.let { newValue ->
             krate.save(newValue)
-            assertEquals(newValue, krate.cachedValue)
-            assertEquals(newValue, krate.loadAndGet())
+            assertEquals(newValue, stateFlow.value)
+            assertEquals(newValue, krate.getValue())
         }
         krate.reset()
-        assertEquals(factoryValue, krate.cachedValue)
-        assertEquals(factoryValue, krate.loadAndGet())
+        assertEquals(factoryValue, stateFlow.value)
+        assertEquals(factoryValue, krate.getValue())
     }
 
     @Test
@@ -64,16 +61,17 @@ internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
             factory = { factoryValue },
             key = intPreferencesKey("KEY_4")
         )
-        assertEquals(factoryValue, krate.cachedValue)
-        assertEquals(factoryValue, krate.loadAndGet())
-        assertEquals(factoryValue, krate.cachedValue)
+        val stateFlow = krate.stateFlow(TestScope())
+        assertEquals(factoryValue, stateFlow.value)
+        assertEquals(factoryValue, krate.getValue())
+        assertEquals(factoryValue, stateFlow.value)
         11.let { newValue ->
             krate.save(newValue)
-            assertEquals(newValue, krate.cachedValue)
-            assertEquals(newValue, krate.loadAndGet())
+            assertEquals(newValue, stateFlow.value)
+            assertEquals(newValue, krate.getValue())
         }
         krate.reset()
-        assertEquals(factoryValue, krate.cachedValue)
-        assertEquals(factoryValue, krate.loadAndGet())
+        assertEquals(factoryValue, stateFlow.value)
+        assertEquals(factoryValue, krate.getValue())
     }
 }

@@ -1,17 +1,18 @@
 package ru.astrainteractive.klibs.kstorage.api
 
 /**
- * [MutableKrate] allows you to save/load values from your storage without
- * depending on SharedPreferences or other library
+ * Represents a mutable key-value container (Krate) that allows both reading and modifying its stored value.
+ * This interface provides the ability to save a new value and reset the value to its initial state.
  */
 interface MutableKrate<T> : Krate<T> {
+
     /**
-     * Save new value into storage and update current
+     * Saves the provided value
      */
     fun save(value: T)
 
     /**
-     * Reset value to default
+     * Resets the stored value to its default or initial state.
      */
     fun reset()
 }
