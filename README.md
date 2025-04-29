@@ -98,6 +98,17 @@ class SuspendSettingsApi(private val intSettingsMap: MutableMap<String, Int>) {
             else intSettingsMap["INT_KEY"] = value
         }
     ).withDefault { 102 }
+    
+    val nullableSuspendMutableKrate: SuspendMutableKrate<Int?> = DefaultSuspendMutableKrate(
+        factory = { null },
+        loader = { intSettingsMap["INT_KEY"] },
+        saver = { value ->
+            if (value != null) intSettingsMap["INT_KEY"] = value
+            else intSettingsMap.remove("INT_KEY")
+        }
+    )
+    val nullableStateFlowSuspendMutableKrate = nullableSuspendMutableKrate.asStateFlowMutableKrate()
+    val nullableStateFlowSuspendMutableKrate = nullableSuspendMutableKrate.asStateFlowMutableKrate { 10 }
 }
 ```
 

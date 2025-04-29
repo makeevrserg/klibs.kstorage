@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package ru.astrainteractive.klibs.kstorage.util
 
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
@@ -122,4 +124,15 @@ fun <T : Any> FlowMutableKrate<T?>.withDefault(
 
 operator fun <T> StateFlowSuspendKrate<T>.getValue(thisRef: Any, property: KProperty<*>): T {
     return this.cachedStateFlow.value
+}
+
+fun <T : Any> SuspendMutableKrate<T?>.asStateFlowMutableKrate(
+    coroutineContext: CoroutineContext = getIoDispatcher()
+): StateFlowSuspendMutableKrate<T?> {
+    return DefaultStateFlowSuspendMutableKrate(
+        factory = { null },
+        loader = { this.getValue() },
+        saver = { value -> this.save(value) },
+        coroutineContext = coroutineContext
+    )
 }
