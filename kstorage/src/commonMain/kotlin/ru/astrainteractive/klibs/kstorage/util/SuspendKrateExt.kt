@@ -130,6 +130,13 @@ operator fun <T> StateFlowSuspendKrate<T>.getValue(thisRef: Any, property: KProp
 }
 
 /**
+ * Enables Kotlin property delegation to access the current value of a StateFlowSuspendKrate.
+ */
+operator fun <T> StateFlowSuspendKrate<T>.getValue(thisRef: Nothing?, property: KProperty<*>): T {
+    return this.cachedStateFlow.value
+}
+
+/**
  * Converts a nullable suspend-based MutableKrate into a StateFlowSuspendMutableKrate for reactive value observation.
  */
 fun <T : Any> SuspendMutableKrate<T?>.asStateFlowMutableKrate(
