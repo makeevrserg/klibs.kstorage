@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package ru.astrainteractive.klibs.kstorage.util
 
 import ru.astrainteractive.klibs.kstorage.api.CachedKrate
@@ -67,6 +69,13 @@ fun <T : Any> MutableKrate<T?>.withDefault(factory: ValueFactory<T>): MutableKra
  */
 operator fun <T> CachedKrate<T>.getValue(thisRef: Any, property: KProperty<*>): T {
     return this.cachedValue
+}
+
+/**
+ * Allows Kotlin's property delegation syntax to access the cached value of a CachedKrate.
+ */
+operator fun <T> CachedKrate<T>.getValue(thisRef: Nothing?, property: KProperty<*>): T {
+    return this.getValue()
 }
 
 /**
