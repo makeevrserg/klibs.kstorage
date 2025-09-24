@@ -1,4 +1,4 @@
-package ru.astrainteractive.klibs.kstorage.test
+package ru.astrainteractive.klibs.kstorage.util
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

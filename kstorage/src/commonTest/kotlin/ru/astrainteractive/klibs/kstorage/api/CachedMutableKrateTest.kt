@@ -1,8 +1,8 @@
-package ru.astrainteractive.klibs.kstorage
+package ru.astrainteractive.klibs.kstorage.api
 
 import kotlinx.coroutines.test.runTest
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
-import ru.astrainteractive.klibs.kstorage.test.SampleStore
+import ru.astrainteractive.klibs.kstorage.util.SampleStore
 import ru.astrainteractive.klibs.kstorage.util.asCachedKrate
 import ru.astrainteractive.klibs.kstorage.util.asCachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.util.asStateFlowKrate
