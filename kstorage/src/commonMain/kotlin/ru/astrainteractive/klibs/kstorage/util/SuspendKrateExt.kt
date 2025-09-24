@@ -2,6 +2,8 @@
 
 package ru.astrainteractive.klibs.kstorage.util
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
 import ru.astrainteractive.klibs.kstorage.suspend.FlowKrate
@@ -148,4 +150,23 @@ fun <T : Any> SuspendMutableKrate<T?>.asStateFlowMutableKrate(
         saver = { value -> this.save(value) },
         coroutineContext = coroutineContext
     )
+}
+
+fun <T> FlowMutableKrate<T>.asStateFlowSuspendMutableKrate(scope: CoroutineScope): StateFlowSuspendMutableKrate<T> {
+    val instance = this
+    return object : StateFlowSuspendMutableKrate<T> {
+        override val cachedStateFlow: StateFlow<T> = instance.stateFlow(scope)
+
+        override suspend fun getValue(): T {
+            return instance.getValue()
+        }
+
+        override suspend fun save(value: T) {
+            instance.save(value)
+        }
+
+        override suspend fun reset() {
+            instance.reset()
+        }
+    }
 }

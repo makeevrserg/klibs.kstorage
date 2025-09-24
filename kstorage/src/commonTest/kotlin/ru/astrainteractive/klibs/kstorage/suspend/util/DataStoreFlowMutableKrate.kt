@@ -3,7 +3,6 @@ package ru.astrainteractive.klibs.kstorage.suspend.util
 import com.russhwolf.settings.coroutines.FlowSettings
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
-import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrateTest
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
 
 internal class DataStoreFlowMutableKrate(
@@ -15,4 +14,3 @@ internal class DataStoreFlowMutableKrate(
     loader = { settings.getIntOrNullFlow(key) },
     saver = { value -> settings.putInt(key, value) }
 )
-

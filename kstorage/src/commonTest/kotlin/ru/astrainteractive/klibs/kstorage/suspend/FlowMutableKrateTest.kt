@@ -17,6 +17,7 @@ internal class FlowMutableKrateTest {
             .makeObservable()
             .toFlowSettings(UnconfinedTestDispatcher())
     }
+
     @Test
     fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default() = runTest {
         val factoryValue = 10
