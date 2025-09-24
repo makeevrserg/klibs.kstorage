@@ -27,7 +27,7 @@ suspend fun <T> SuspendMutableKrate<T>.resetAndGet(): T {
 /**
  * Suspends while retrieving the current value, transforms it using the suspend block, and saves the result.
  */
-suspend fun <T> SuspendMutableKrate<T>.update(block: suspend (T) -> T) {
+suspend fun <T> SuspendMutableKrate<T>.save(block: suspend (T) -> T) {
     val oldValue = getValue()
     val newValue = block.invoke(oldValue)
     save(newValue)
@@ -36,7 +36,7 @@ suspend fun <T> SuspendMutableKrate<T>.update(block: suspend (T) -> T) {
 /**
  * Suspends while transforming the current value using the suspend block, saves it, and returns the new value.
  */
-suspend fun <T> SuspendMutableKrate<T>.updateAndGet(block: suspend (T) -> T): T {
+suspend fun <T> SuspendMutableKrate<T>.saveAndGet(block: suspend (T) -> T): T {
     val oldValue = getValue()
     val newValue = block.invoke(oldValue)
     save(newValue)

@@ -27,7 +27,7 @@ fun <T> MutableKrate<T>.resetAndGet(): T {
 /**
  * Applies a transformation to the current value using the provided block and saves the result.
  */
-fun <T> MutableKrate<T>.update(block: (T) -> T) {
+fun <T> MutableKrate<T>.save(block: (T) -> T) {
     val oldValue = getValue()
     val newValue = block.invoke(oldValue)
     save(newValue)
@@ -36,7 +36,7 @@ fun <T> MutableKrate<T>.update(block: (T) -> T) {
 /**
  * Applies a transformation to the current value, saves the result, and returns the updated value.
  */
-fun <T> MutableKrate<T>.updateAndGet(block: (T) -> T): T {
+fun <T> MutableKrate<T>.saveAndGet(block: (T) -> T): T {
     val oldValue = getValue()
     val newValue = block.invoke(oldValue)
     save(newValue)
