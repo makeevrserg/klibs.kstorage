@@ -52,12 +52,14 @@ kotlin {
         }
         val wasmJsMain by getting
         val jsMain by getting
+        val webMain by getting
         val nonJsMain by creating {
             this.dependsOn(commonMain)
             sourceSets.toList()
                 .filter { sourceSet -> sourceSet.name.endsWith("Main") }
                 .filter { sourceSet -> sourceSet.name != wasmJsMain.name }
                 .filter { sourceSet -> sourceSet.name != jsMain.name }
+                .filter { sourceSet -> sourceSet.name != webMain.name }
                 .filter { sourceSet -> sourceSet.name != commonMain.name }
                 .onEach { sourceSet -> sourceSet.dependsOn(this) }
                 .toList()
