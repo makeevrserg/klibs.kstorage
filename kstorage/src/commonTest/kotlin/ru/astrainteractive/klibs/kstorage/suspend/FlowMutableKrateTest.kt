@@ -1,19 +1,30 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
-import androidx.datastore.preferences.core.intPreferencesKey
+import com.russhwolf.settings.coroutines.FlowSettings
+import com.russhwolf.settings.coroutines.toFlowSettings
+import com.russhwolf.settings.observable.makeObservable
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import ru.astrainteractive.klibs.kstorage.suspend.test.DataStoreFlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.util.DataStoreFlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.util.MapSettings
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
+internal class FlowMutableKrateTest {
+    private fun createSettings(): FlowSettings {
+        return MapSettings()
+            .makeObservable()
+            .toFlowSettings(UnconfinedTestDispatcher())
+    }
+
     @Test
     fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default() = runTest {
         val factoryValue = 10
         val krate = DataStoreFlowMutableKrate(
             factory = { factoryValue },
-            key = intPreferencesKey("KEY_1")
+            key = "KEY_1",
+            settings = createSettings()
         )
         val stateFlow = krate.stateFlow(TestScope())
         assertEquals(factoryValue, stateFlow.value)
@@ -26,7 +37,8 @@ internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
         val factoryValue = 15
         val krate = DataStoreFlowMutableKrate(
             factory = { factoryValue },
-            key = intPreferencesKey("KEY_2")
+            key = "KEY_2",
+            settings = createSettings()
         )
         val stateFlow = krate.stateFlow(TestScope())
         assertEquals(factoryValue, stateFlow.value)
@@ -39,9 +51,10 @@ internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
         val factoryValue = 10
         val krate = DataStoreFlowMutableKrate(
             factory = { factoryValue },
-            key = intPreferencesKey("KEY_3")
+            key = "KEY_3",
+            settings = createSettings()
         )
-        val stateFlow = krate.stateFlow(TestScope())
+        val stateFlow = krate.stateFlow(backgroundScope)
         assertEquals(factoryValue, stateFlow.value)
         assertEquals(factoryValue, krate.getValue())
         11.let { newValue ->
@@ -59,7 +72,8 @@ internal class FlowSuspendFlowStateFlowSuspendMutableKrateKrateKrateKrateTest {
         val factoryValue = 10
         val krate = DataStoreFlowMutableKrate(
             factory = { factoryValue },
-            key = intPreferencesKey("KEY_4")
+            key = "KEY_4",
+            settings = createSettings()
         )
         val stateFlow = krate.stateFlow(TestScope())
         assertEquals(factoryValue, stateFlow.value)

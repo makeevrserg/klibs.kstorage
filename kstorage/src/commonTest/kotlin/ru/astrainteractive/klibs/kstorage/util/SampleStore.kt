@@ -1,4 +1,4 @@
-package ru.astrainteractive.klibs.kstorage.test
+package ru.astrainteractive.klibs.kstorage.util
 
 internal class SampleStore(filledValues: Map<String, Any?> = emptyMap()) {
     private val map: MutableMap<String, Any?> = HashMap()

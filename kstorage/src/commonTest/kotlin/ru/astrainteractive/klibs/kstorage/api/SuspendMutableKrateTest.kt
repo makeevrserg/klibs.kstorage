@@ -1,11 +1,11 @@
-package ru.astrainteractive.klibs.kstorage
+package ru.astrainteractive.klibs.kstorage.api
 
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.timeout
 import kotlinx.coroutines.test.runTest
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultStateFlowSuspendMutableKrate
-import ru.astrainteractive.klibs.kstorage.test.SampleStore
+import ru.astrainteractive.klibs.kstorage.util.SampleStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds

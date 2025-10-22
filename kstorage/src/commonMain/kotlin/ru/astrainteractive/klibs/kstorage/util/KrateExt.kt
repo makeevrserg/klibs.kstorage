@@ -2,6 +2,7 @@
 
 package ru.astrainteractive.klibs.kstorage.util
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.astrainteractive.klibs.kstorage.api.CachedKrate
 import ru.astrainteractive.klibs.kstorage.api.CachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.Krate
@@ -14,6 +15,7 @@ import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
 import kotlin.reflect.KProperty
 
 /**
@@ -27,7 +29,7 @@ fun <T> MutableKrate<T>.resetAndGet(): T {
 /**
  * Applies a transformation to the current value using the provided block and saves the result.
  */
-fun <T> MutableKrate<T>.update(block: (T) -> T) {
+fun <T> MutableKrate<T>.save(block: (T) -> T) {
     val oldValue = getValue()
     val newValue = block.invoke(oldValue)
     save(newValue)
@@ -36,7 +38,7 @@ fun <T> MutableKrate<T>.update(block: (T) -> T) {
 /**
  * Applies a transformation to the current value, saves the result, and returns the updated value.
  */
-fun <T> MutableKrate<T>.updateAndGet(block: (T) -> T): T {
+fun <T> MutableKrate<T>.saveAndGet(block: (T) -> T): T {
     val oldValue = getValue()
     val newValue = block.invoke(oldValue)
     save(newValue)
@@ -104,4 +106,17 @@ fun <T> Krate<T>.asStateFlowKrate(): StateFlowKrate<T> {
  */
 fun <T> MutableKrate<T>.asStateFlowMutableKrate(): StateFlowMutableKrate<T> {
     return DefaultStateFlowMutableKrate(this)
+}
+
+/**
+ * Creates [SuspendMutableKrate] which value will be stored in-memory
+ */
+@Suppress("FunctionNaming")
+fun <T> InMemoryMutableKrate(factory: ValueFactory<T>): MutableKrate<T> {
+    val stateFlowValue by lazy { MutableStateFlow(factory.create()) }
+    return DefaultMutableKrate(
+        factory = factory,
+        saver = { newValue -> stateFlowValue.value = newValue },
+        loader = { stateFlowValue.value }
+    )
 }

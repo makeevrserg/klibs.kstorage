@@ -6,6 +6,7 @@ import ru.astrainteractive.gradleplugin.property.extension.ModelPropertyValueExt
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id("org.jetbrains.kotlinx.atomicfu") version "0.30.0-beta"
 }
 kotlin {
     jvm()
@@ -42,6 +43,9 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(libs.kotlin.coroutines.test)
+                implementation(libs.settings)
+                implementation(libs.settings.observable)
+                implementation(libs.settings.coroutines)
             }
         }
         val jvmTest by getting {
