@@ -2,7 +2,7 @@ package ru.astrainteractive.klibs.kstorage.api
 
 import kotlinx.coroutines.test.runTest
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
-import ru.astrainteractive.klibs.kstorage.util.SampleStore
+import ru.astrainteractive.klibs.kstorage.settings.MapSettings
 import ru.astrainteractive.klibs.kstorage.util.asCachedKrate
 import ru.astrainteractive.klibs.kstorage.util.asCachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.util.asStateFlowKrate
@@ -15,10 +15,10 @@ internal class CachedMutableKrateTest {
     fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default() = runTest {
         val factoryValue = 10
         val createKrate = {
-            val store = SampleStore()
+            val store = MapSettings()
             DefaultMutableKrate(
                 factory = { factoryValue },
-                saver = { store.put("KEY", it) },
+                saver = { store.putInt("KEY", it) },
                 loader = { null }
             )
         }
@@ -38,10 +38,16 @@ internal class CachedMutableKrateTest {
     fun GIVEN_null_as_default_10_as_loader_WHEN_load_THEN_return_loader() = runTest {
         val loaderValue = 10
         val createKrate = {
-            val store = SampleStore()
+            val store = MapSettings()
             DefaultMutableKrate(
                 factory = { null },
-                saver = { store.put("KEY", it) },
+                saver = {
+                    if (it == null) {
+                        store.remove("KEY")
+                    } else {
+                        store.putInt("KEY", it)
+                    }
+                },
                 loader = { loaderValue }
             )
         }
@@ -62,10 +68,10 @@ internal class CachedMutableKrateTest {
         val loaderValue = 10
         val factoryValue = 15
         val createKrate = {
-            val store = SampleStore()
+            val store = MapSettings()
             DefaultMutableKrate(
                 factory = { factoryValue },
-                saver = { store.put("KEY", it) },
+                saver = { store.putInt("KEY", it) },
                 loader = { loaderValue }
             )
         }
@@ -85,11 +91,11 @@ internal class CachedMutableKrateTest {
     fun GIVEN_empty_store_WHEN_save_and_reset_THEN_saved_and_reset() = runTest {
         val factoryValue = 10
         val createKrate = {
-            val store = SampleStore()
+            val store = MapSettings()
             DefaultMutableKrate(
                 factory = { factoryValue },
-                saver = { store.put("KEY", it) },
-                loader = { store.get("KEY") }
+                saver = { store.putInt("KEY", it) },
+                loader = { store.getIntOrNull("KEY") }
             )
         }
         listOf(
@@ -113,12 +119,12 @@ internal class CachedMutableKrateTest {
     fun GIVEN_prefilled_store_WHEN_save_and_reset_THEN_saved_and_reset() = runTest {
         val factoryValue = 10
         val defaultStoreValue = 15
-        val store = SampleStore(mapOf("KEY" to defaultStoreValue))
+        val store = MapSettings(mapOf("KEY" to defaultStoreValue))
         val createKrate = {
             DefaultMutableKrate(
                 factory = { factoryValue },
-                saver = { store.put("KEY", it) },
-                loader = { store.get("KEY") }
+                saver = { store.putInt("KEY", it) },
+                loader = { store.getIntOrNull("KEY") }
             )
         }
         listOf(
@@ -126,7 +132,7 @@ internal class CachedMutableKrateTest {
             createKrate.invoke().asStateFlowMutableKrate(),
         ).forEach { krate ->
             store.clear()
-            store.put("KEY", defaultStoreValue)
+            store.putInt("KEY", defaultStoreValue)
 
             assertEquals(defaultStoreValue, krate.cachedValue)
             assertEquals(defaultStoreValue, krate.getValue())
@@ -135,7 +141,7 @@ internal class CachedMutableKrateTest {
                 assertEquals(newValue, krate.cachedValue)
                 assertEquals(newValue, krate.getValue())
             }
-            store.put("KEY", null)
+            store.remove("KEY")
             krate.reset()
             assertEquals(factoryValue, krate.cachedValue)
             assertEquals(factoryValue, krate.getValue())

@@ -1,9 +1,14 @@
-package ru.astrainteractive.klibs.kstorage.suspend.util
+package ru.astrainteractive.klibs.kstorage.settings
 
 import com.russhwolf.settings.Settings
 
-internal class MapSettings : Settings {
-    private val map = mutableMapOf<Any, Any>()
+internal class MapSettings(
+    filledValues: Map<Any, Any> = emptyMap()
+) : Settings {
+    private val map = mutableMapOf<Any, Any>().apply {
+        putAll(filledValues)
+    }
+
     override fun clear() {
         map.clear()
     }
@@ -90,6 +95,7 @@ internal class MapSettings : Settings {
 
     override val keys: Set<String>
         get() = map.keys.map(Any::toString).toSet()
+
     override val size: Int
         get() = map.size
 }

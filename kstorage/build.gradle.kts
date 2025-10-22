@@ -6,7 +6,6 @@ import ru.astrainteractive.gradleplugin.property.extension.ModelPropertyValueExt
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    id("org.jetbrains.kotlinx.atomicfu") version "0.30.0-beta"
 }
 kotlin {
     jvm()
@@ -46,12 +45,6 @@ kotlin {
                 implementation(libs.settings)
                 implementation(libs.settings.observable)
                 implementation(libs.settings.coroutines)
-            }
-        }
-        val jvmTest by getting {
-            dependencies {
-                implementation(libs.androidx.datastore.preferences.core)
-                implementation(libs.androidx.datastore.core.okio)
             }
         }
         val wasmJsMain by getting
