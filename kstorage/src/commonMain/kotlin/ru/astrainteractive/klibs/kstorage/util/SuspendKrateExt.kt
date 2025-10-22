@@ -3,6 +3,7 @@
 package ru.astrainteractive.klibs.kstorage.util
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
@@ -141,7 +142,7 @@ operator fun <T> StateFlowSuspendKrate<T>.getValue(thisRef: Nothing?, property: 
 /**
  * Converts a nullable suspend-based MutableKrate into a StateFlowSuspendMutableKrate for reactive value observation.
  */
-fun <T : Any> SuspendMutableKrate<T?>.asStateFlowMutableKrate(
+fun <T : Any> SuspendMutableKrate<T?>.asStateFlowSuspendMutableKrate(
     coroutineContext: CoroutineContext = getIoDispatcher()
 ): StateFlowSuspendMutableKrate<T?> {
     return DefaultStateFlowSuspendMutableKrate(
@@ -152,6 +153,10 @@ fun <T : Any> SuspendMutableKrate<T?>.asStateFlowMutableKrate(
     )
 }
 
+/**
+ * Converts this [FlowMutableKrate] into a [StateFlowSuspendMutableKrate],
+ * exposing its state as a [StateFlow] that is kept up to date within the given [CoroutineScope].
+ */
 fun <T> FlowMutableKrate<T>.asStateFlowSuspendMutableKrate(scope: CoroutineScope): StateFlowSuspendMutableKrate<T> {
     val instance = this
     return object : StateFlowSuspendMutableKrate<T> {
@@ -169,4 +174,17 @@ fun <T> FlowMutableKrate<T>.asStateFlowSuspendMutableKrate(scope: CoroutineScope
             instance.reset()
         }
     }
+}
+
+/**
+ * Creates [SuspendMutableKrate] which value will be stored in-memory
+ */
+@Suppress("FunctionNaming")
+fun <T> InMemorySuspendMutableKrate(factory: ValueFactory<T>): SuspendMutableKrate<T> {
+    val stateFlowValue by lazy { MutableStateFlow(factory.create()) }
+    return DefaultSuspendMutableKrate(
+        factory = factory,
+        saver = { newValue -> stateFlowValue.value = newValue },
+        loader = { stateFlowValue.value }
+    )
 }

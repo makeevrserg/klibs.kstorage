@@ -2,6 +2,7 @@
 
 package ru.astrainteractive.klibs.kstorage.util
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import ru.astrainteractive.klibs.kstorage.api.CachedKrate
 import ru.astrainteractive.klibs.kstorage.api.CachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.Krate
@@ -14,6 +15,7 @@ import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
 import kotlin.reflect.KProperty
 
 /**
@@ -104,4 +106,17 @@ fun <T> Krate<T>.asStateFlowKrate(): StateFlowKrate<T> {
  */
 fun <T> MutableKrate<T>.asStateFlowMutableKrate(): StateFlowMutableKrate<T> {
     return DefaultStateFlowMutableKrate(this)
+}
+
+/**
+ * Creates [SuspendMutableKrate] which value will be stored in-memory
+ */
+@Suppress("FunctionNaming")
+fun <T> InMemoryMutableKrate(factory: ValueFactory<T>): MutableKrate<T> {
+    val stateFlowValue by lazy { MutableStateFlow(factory.create()) }
+    return DefaultMutableKrate(
+        factory = factory,
+        saver = { newValue -> stateFlowValue.value = newValue },
+        loader = { stateFlowValue.value }
+    )
 }
