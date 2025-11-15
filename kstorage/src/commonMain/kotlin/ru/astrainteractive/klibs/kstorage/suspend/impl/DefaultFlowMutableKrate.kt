@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -31,7 +31,9 @@ class DefaultFlowMutableKrate<T>(
         .stateIn(coroutineScope, sharingStarted, factory.create())
 
     override suspend fun getValue(): T {
-        val value = loader.provide().first() ?: factory.create()
+        val value = flow
+            .firstOrNull()
+            ?: factory.create()
         return value
     }
 
