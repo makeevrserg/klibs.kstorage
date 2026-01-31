@@ -1,15 +1,15 @@
 @file:Suppress("UnusedPrivateMember")
 
-import ru.astrainteractive.gradleplugin.property.extension.ModelPropertyValueExt.requireProjectInfo
-
-
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
+    id("ru.astrainteractive.gradleplugin.android.sdk")
+    id("ru.astrainteractive.gradleplugin.publication")
+    id("ru.astrainteractive.gradleplugin.android.namespace")
 }
 kotlin {
     jvm()
-    androidTarget()
+    androidLibrary {}
     js(IR) {
         browser()
         nodejs()
@@ -62,8 +62,4 @@ kotlin {
                 .toList()
         }
     }
-}
-
-android {
-    namespace = "${requireProjectInfo.group}.kstorage"
 }
