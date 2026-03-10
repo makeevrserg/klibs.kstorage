@@ -2,14 +2,10 @@
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.kotlin.multiplatform.library")
     id("ru.astrainteractive.gradleplugin.android.sdk")
-    id("ru.astrainteractive.gradleplugin.publication")
-    id("ru.astrainteractive.gradleplugin.android.namespace")
 }
 kotlin {
     jvm()
-    androidLibrary {}
     js(IR) {
         browser()
         nodejs()
@@ -36,7 +32,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlin.coroutines.core)
-                implementation(project(":lock"))
             }
         }
         val commonTest by getting {
@@ -47,20 +42,6 @@ kotlin {
                 implementation(libs.settings.observable)
                 implementation(libs.settings.coroutines)
             }
-        }
-        val wasmJsMain by getting
-        val jsMain by getting
-        val webMain by getting
-        val nonJsMain by creating {
-            this.dependsOn(commonMain)
-            sourceSets.toList()
-                .filter { sourceSet -> sourceSet.name.endsWith("Main") }
-                .filter { sourceSet -> sourceSet.name != wasmJsMain.name }
-                .filter { sourceSet -> sourceSet.name != jsMain.name }
-                .filter { sourceSet -> sourceSet.name != webMain.name }
-                .filter { sourceSet -> sourceSet.name != commonMain.name }
-                .onEach { sourceSet -> sourceSet.dependsOn(this) }
-                .toList()
         }
     }
 }

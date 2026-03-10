@@ -20,3 +20,4 @@ rootProject.name = "KStorage"
 
 // Subprojects
 include(":kstorage")
+include(":lock")
