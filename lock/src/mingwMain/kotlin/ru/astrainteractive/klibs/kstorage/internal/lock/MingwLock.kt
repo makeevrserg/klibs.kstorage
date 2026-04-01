@@ -4,6 +4,7 @@ import kotlinx.cinterop.Arena
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.ptr
+import kotlinx.coroutines.runBlocking
 import platform.posix.pthread_mutex_destroy
 import platform.posix.pthread_mutex_init
 import platform.posix.pthread_mutex_lock
@@ -26,12 +27,15 @@ class MingwLock : Lock {
     @Suppress("unused") // Must be assigned
     @OptIn(ExperimentalNativeApi::class)
     private val cleaner = createCleaner(resources, Resources::destroy)
+    override var isLocked: Boolean = false
     private fun lock() {
         pthread_mutex_lock(resources.mutex.ptr)
+        isLocked = true
     }
 
     private fun unlock() {
         pthread_mutex_unlock(resources.mutex.ptr)
+        isLocked = false
     }
 
     override fun <T> withLock(block: () -> T): T {
@@ -41,6 +45,10 @@ class MingwLock : Lock {
         } finally {
             unlock()
         }
+    }
+
+    override suspend fun <T> withSuspendLock(block: suspend () -> T): T {
+        return withLock { runBlocking { block.invoke() } }
     }
 
     private class Resources {

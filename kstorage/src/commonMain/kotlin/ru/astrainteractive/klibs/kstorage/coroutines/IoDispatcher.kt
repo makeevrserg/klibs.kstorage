@@ -1,5 +1,5 @@
 package ru.astrainteractive.klibs.kstorage.coroutines
 
-import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineDispatcher
 
-internal expect fun getIoDispatcher(): CoroutineContext
+internal expect fun getIoDispatcher(): CoroutineDispatcher

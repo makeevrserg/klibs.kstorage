@@ -6,6 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
 
 /**
  * A [Krate] that exposes its value as a Kotlin [Flow] for reactive consumption.
@@ -29,7 +31,7 @@ interface FlowKrate<T> : SuspendKrate<T> {
     fun stateFlow(
         coroutineScope: CoroutineScope,
         sharingStarted: SharingStarted = SharingStarted.Eagerly,
-        dispatcher: CoroutineDispatcher = Dispatchers.Unconfined
+        dispatcher: CoroutineDispatcher = Dispatchers.Default
     ): StateFlow<T>
 
     /**
@@ -38,4 +40,16 @@ interface FlowKrate<T> : SuspendKrate<T> {
      */
     val CoroutineScope.stateFlow: StateFlow<T>
         get() = stateFlow(coroutineScope = this)
+}
+
+/**
+ * Converts a nullable FlowKrate to a non-nullable one by applying a default factory.
+ */
+fun <T : Any> FlowKrate<T?>.withDefault(
+    factory: ValueFactory<T>,
+): FlowKrate<T> {
+    return DefaultFlowMutableKrate(
+        factory = factory,
+        loader = { flow },
+    )
 }

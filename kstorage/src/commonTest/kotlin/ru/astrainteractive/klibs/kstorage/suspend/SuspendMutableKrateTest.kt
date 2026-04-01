@@ -1,5 +1,6 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.timeout
@@ -19,7 +20,7 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { store.putInt("KEY", it) },
             loader = { null },
-            coroutineContext = coroutineContext
+            coroutineDispatcher = Dispatchers.Default
         )
         assertEquals(factoryValue, krate.cachedStateFlow.value)
         assertEquals(factoryValue, krate.getValue())
@@ -40,7 +41,7 @@ internal class SuspendMutableKrateTest {
                 }
             },
             loader = { loaderValue },
-            coroutineContext = coroutineContext
+            coroutineDispatcher = Dispatchers.Default
         )
         assertEquals(null, krate.cachedStateFlow.value)
         assertEquals(loaderValue, krate.getValue())
@@ -56,7 +57,7 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { store.putInt("KEY", it) },
             loader = { loaderValue },
-            coroutineContext = coroutineContext
+            coroutineDispatcher = Dispatchers.Default
         )
         assertEquals(factoryValue, krate.cachedStateFlow.value)
         assertEquals(loaderValue, krate.getValue())
@@ -71,7 +72,7 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { store.putInt("KEY", it) },
             loader = { store.getIntOrNull("KEY") },
-            coroutineContext = coroutineContext
+            coroutineDispatcher = Dispatchers.Default
         )
         assertEquals(factoryValue, krate.cachedStateFlow.value)
         assertEquals(factoryValue, krate.getValue())
@@ -94,7 +95,7 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { store.putInt("KEY", it) },
             loader = { store.getIntOrNull("KEY") },
-            coroutineContext = coroutineContext
+            coroutineDispatcher = Dispatchers.Default
         )
         assertEquals(factoryValue, krate.cachedStateFlow.value)
         assertEquals(defaultStoreValue, krate.getValue())
@@ -118,7 +119,7 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { },
             loader = { loadedValue },
-            coroutineContext = coroutineContext
+            coroutineDispatcher = Dispatchers.Default
         )
 
         assertEquals(

@@ -32,7 +32,7 @@ class DefaultFlowMutableKrateTest {
         )
         assertEquals(1, krate.flow.filterNotNull().first())
         assertEquals(1, krate.getValue())
-        assertEquals(1, krate.stateFlow(backgroundScope).first())
+        assertEquals(1, krate.stateFlow(backgroundScope).filterNotNull().first())
     }
 
     @Test

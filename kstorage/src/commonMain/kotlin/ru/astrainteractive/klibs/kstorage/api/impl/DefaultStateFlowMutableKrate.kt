@@ -5,16 +5,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
 import ru.astrainteractive.klibs.kstorage.api.StateFlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.internal.lock.Lock
 
-/**
- * This [DefaultStateFlowMutableKrate] can be used with delegation
- *
- * If false will put [factory] value into [cachedValue]
- */
 class DefaultStateFlowMutableKrate<T>(
     private val instance: MutableKrate<T>,
 ) : StateFlowMutableKrate<T> {
-    private var _cachedStateFlow = MutableStateFlow(instance.getValue())
+    private val lock = Lock()
+    private var _cachedStateFlow = lock.withLock {
+        MutableStateFlow(instance.getValue())
+    }
 
     override val cachedStateFlow: StateFlow<T>
         get() = _cachedStateFlow
@@ -23,18 +22,46 @@ class DefaultStateFlowMutableKrate<T>(
         get() = cachedStateFlow.value
 
     override fun save(value: T) {
-        _cachedStateFlow.update { value }
-        instance.save(value)
+        lock.withLock {
+            _cachedStateFlow.update { value }
+            instance.save(value)
+        }
     }
 
     override fun reset() {
-        instance.reset()
-        _cachedStateFlow.update { instance.getValue() }
+        lock.withLock {
+            _cachedStateFlow.update { instance.resetAndGet() }
+        }
+    }
+
+    override fun resetAndGet(): T {
+        return lock.withLock {
+            val currentValue = instance.resetAndGet()
+            _cachedStateFlow.update { currentValue }
+            currentValue
+        }
+    }
+
+    override fun save(block: (T) -> T) {
+        return lock.withLock {
+            val currentValue = instance.saveAndGet(block)
+            _cachedStateFlow.update { currentValue }
+        }
+    }
+
+    override fun saveAndGet(block: (T) -> T): T {
+        return lock.withLock {
+            val currentValue = instance.saveAndGet(block)
+            _cachedStateFlow.update { currentValue }
+            currentValue
+        }
     }
 
     override fun getValue(): T {
-        val value = instance.getValue()
-        _cachedStateFlow.update { value }
-        return value
+        return lock.withLock {
+            val value = instance.getValue()
+            _cachedStateFlow.update { value }
+            value
+        }
     }
 }

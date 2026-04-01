@@ -3,6 +3,8 @@ package ru.astrainteractive.klibs.kstorage.suspend
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -54,16 +56,20 @@ internal class FlowMutableKrateTest {
             key = "KEY_3",
             settings = createSettings()
         )
-        val stateFlow = krate.stateFlow(backgroundScope)
-        assertEquals(factoryValue, stateFlow.value)
+        val stateFlow = krate.stateFlow(
+            coroutineScope = backgroundScope,
+            dispatcher = Dispatchers.Unconfined
+        )
+        assertEquals(factoryValue, stateFlow.first())
         assertEquals(factoryValue, krate.getValue())
         11.let { newValue ->
             krate.save(newValue)
-            assertEquals(newValue, stateFlow.value)
+            assertEquals(newValue, stateFlow.first())
             assertEquals(newValue, krate.getValue())
         }
         krate.reset()
-        assertEquals(factoryValue, stateFlow.value)
+
+        assertEquals(factoryValue, stateFlow.first())
         assertEquals(factoryValue, krate.getValue())
     }
 
@@ -75,7 +81,10 @@ internal class FlowMutableKrateTest {
             key = "KEY_4",
             settings = createSettings()
         )
-        val stateFlow = krate.stateFlow(TestScope())
+        val stateFlow = krate.stateFlow(
+            coroutineScope = backgroundScope,
+            dispatcher = Dispatchers.Unconfined
+        )
         assertEquals(factoryValue, stateFlow.value)
         assertEquals(factoryValue, krate.getValue())
         assertEquals(factoryValue, stateFlow.value)
