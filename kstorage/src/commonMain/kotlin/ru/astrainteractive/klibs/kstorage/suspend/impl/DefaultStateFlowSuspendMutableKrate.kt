@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
-import ru.astrainteractive.klibs.kstorage.internal.lock.Lock
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueLoader
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver
@@ -22,8 +22,7 @@ class DefaultStateFlowSuspendMutableKrate<T>(
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
     coroutineDispatcher: CoroutineDispatcher = getIoDispatcher()
-) : StateFlowSuspendMutableKrate<T> {
-    private val lock = Lock()
+) : StateFlowSuspendMutableKrate<T>, LockOwner by LockOwner.Default() {
     private val _cachedStateFlow = lock.withLock { MutableStateFlow(factory.create()) }
     override val cachedStateFlow: StateFlow<T> = _cachedStateFlow.asStateFlow()
 

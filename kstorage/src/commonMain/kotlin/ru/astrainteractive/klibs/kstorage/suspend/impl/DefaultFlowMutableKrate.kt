@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
-import ru.astrainteractive.klibs.kstorage.internal.lock.Lock
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.FlowProvider
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver
@@ -19,8 +19,7 @@ class DefaultFlowMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: FlowProvider<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
-) : FlowMutableKrate<T> {
-    private val lock = Lock()
+) : FlowMutableKrate<T>, LockOwner by LockOwner.Default() {
 
     override val flow: Flow<T> = loader.provide()
         .map { value -> value ?: factory.create() }

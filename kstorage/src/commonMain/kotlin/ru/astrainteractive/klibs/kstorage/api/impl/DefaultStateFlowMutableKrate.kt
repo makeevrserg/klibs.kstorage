@@ -3,15 +3,13 @@ package ru.astrainteractive.klibs.kstorage.api.impl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import ru.astrainteractive.klibs.kstorage.api.LockOwner
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
 import ru.astrainteractive.klibs.kstorage.api.StateFlowMutableKrate
-import ru.astrainteractive.klibs.kstorage.api.reuseLock
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 
 class DefaultStateFlowMutableKrate<T>(
     private val instance: MutableKrate<T>,
-) : StateFlowMutableKrate<T>, LockOwner {
-    override val lock = instance.reuseLock()
+) : StateFlowMutableKrate<T>, LockOwner by LockOwner.Reusable(instance) {
     private var _cachedStateFlow = lock.withLock {
         MutableStateFlow(instance.getValue())
     }

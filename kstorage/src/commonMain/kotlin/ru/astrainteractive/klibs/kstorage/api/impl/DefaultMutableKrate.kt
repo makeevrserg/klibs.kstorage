@@ -1,18 +1,16 @@
 package ru.astrainteractive.klibs.kstorage.api.impl
 
-import ru.astrainteractive.klibs.kstorage.api.LockOwner
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.api.value.ValueLoader
 import ru.astrainteractive.klibs.kstorage.api.value.ValueSaver
-import ru.astrainteractive.klibs.kstorage.internal.lock.Lock
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 
 class DefaultMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val saver: ValueSaver<T> = ValueSaver.Empty(),
     private val loader: ValueLoader<T>,
-) : MutableKrate<T>, LockOwner {
-    override val lock = Lock()
+) : MutableKrate<T>, LockOwner by LockOwner.Default() {
 
     override fun getValue(): T {
         return lock.withLock {
