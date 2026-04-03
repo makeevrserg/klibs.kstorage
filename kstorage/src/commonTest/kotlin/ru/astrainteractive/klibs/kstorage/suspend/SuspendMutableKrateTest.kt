@@ -41,7 +41,6 @@ internal class SuspendMutableKrateTest {
                 }
             },
             loader = { loaderValue },
-            coroutineDispatcher = Dispatchers.Default
         )
         assertEquals(null, krate.cachedStateFlow.value)
         assertEquals(loaderValue, krate.getValue())

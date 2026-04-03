@@ -4,37 +4,17 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.test.TestResult
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withContext
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
 import ru.astrainteractive.klibs.kstorage.settings.MapSettings
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.measureTime
 
 internal class CachedMutableKrateTest {
 
-    fun runTestWithDuration(
-        tag: String,
-        testBody: suspend TestScope.() -> Unit
-    ): TestResult {
-        val result: TestResult
-        val time = measureTime {
-            result = runTest(testBody = {
-                withContext(Dispatchers.Default) {
-                    testBody()
-                }
-            })
-        }
-        println("$tag: EXECUTED TIME: $time")
-        return result
-    }
-
     @Test
     fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default() =
-        runTestWithDuration("1") {
+        runTest {
             val factoryValue = 10
             val createKrate = {
                 val store = MapSettings()
@@ -57,7 +37,7 @@ internal class CachedMutableKrateTest {
         }
 
     @Test
-    fun GIVEN_null_as_default_10_as_loader_WHEN_load_THEN_return_loader() = runTestWithDuration("2") {
+    fun GIVEN_null_as_default_10_as_loader_WHEN_load_THEN_return_loader() = runTest {
         val loaderValue = 10
         val createKrate = {
             val store = MapSettings()
@@ -87,7 +67,7 @@ internal class CachedMutableKrateTest {
 
     @Test
     fun GIVEN_one_as_default_another_as_loader_WHEN_load_THEN_return_loader() =
-        runTestWithDuration("3") {
+        runTest {
             val loaderValue = 10
             val factoryValue = 15
             val createKrate = {
@@ -111,7 +91,7 @@ internal class CachedMutableKrateTest {
         }
 
     @Test
-    fun GIVEN_empty_store_WHEN_save_and_reset_THEN_saved_and_reset() = runTestWithDuration("4") {
+    fun GIVEN_empty_store_WHEN_save_and_reset_THEN_saved_and_reset() = runTest {
         val factoryValue = 10
         val createKrate = {
             val store = MapSettings()
@@ -139,7 +119,7 @@ internal class CachedMutableKrateTest {
     }
 
     @Test
-    fun GIVEN_prefilled_store_WHEN_save_and_reset_THEN_saved_and_reset() = runTestWithDuration("5") {
+    fun GIVEN_prefilled_store_WHEN_save_and_reset_THEN_saved_and_reset() = runTest {
         val factoryValue = 10
         val defaultStoreValue = 15
         val store = MapSettings(mapOf("KEY" to defaultStoreValue))
@@ -172,7 +152,7 @@ internal class CachedMutableKrateTest {
     }
 
     @Test
-    fun GIVEN_2prefilled_store_WHEN_save_and_reset_THEN_saved_and_reset() = runTestWithDuration("6") {
+    fun GIVEN_2prefilled_store_WHEN_save_and_reset_THEN_saved_and_reset() = runTest {
         val store = MapSettings()
         val createKrate = {
             DefaultMutableKrate(
