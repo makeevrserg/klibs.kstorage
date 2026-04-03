@@ -5,9 +5,11 @@ on:
 jobs:
   tests:
     strategy:
+      fail-fast: false
       matrix:
-        platform:
-          - "macos-latest"
+        include:
+          - platform: "macos-latest"
+            task: "allTests"
     name: "Run tests"
     runs-on: ${{ matrix.platform }}
     steps:
@@ -22,4 +24,4 @@ jobs:
       - name: Run tests
         uses: gradle/gradle-build-action@v3
         with:
-          arguments: allTests --stacktrace
+          arguments: ${{ matrix.task }} --stacktrace

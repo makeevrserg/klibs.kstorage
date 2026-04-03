@@ -119,7 +119,7 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { },
             loader = { loadedValue },
-            coroutineDispatcher = Dispatchers.Default
+            coroutineDispatcher = Dispatchers.Unconfined
         )
 
         assertEquals(
