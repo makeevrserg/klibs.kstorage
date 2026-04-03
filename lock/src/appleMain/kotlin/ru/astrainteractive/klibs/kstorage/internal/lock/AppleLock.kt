@@ -1,10 +1,10 @@
 package ru.astrainteractive.klibs.kstorage.internal.lock
 
 import kotlinx.coroutines.runBlocking
-import platform.Foundation.NSLock
+import platform.Foundation.NSRecursiveLock
 
 class AppleLock : Lock {
-    private val nsLock = NSLock()
+    private val nsLock = NSRecursiveLock()
     override var isLocked: Boolean = false
 
     override fun <T> withLock(block: () -> T): T {

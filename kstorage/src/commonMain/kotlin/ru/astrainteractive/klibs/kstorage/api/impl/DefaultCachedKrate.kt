@@ -2,12 +2,13 @@ package ru.astrainteractive.klibs.kstorage.api.impl
 
 import ru.astrainteractive.klibs.kstorage.api.CachedKrate
 import ru.astrainteractive.klibs.kstorage.api.Krate
-import ru.astrainteractive.klibs.kstorage.internal.lock.Lock
+import ru.astrainteractive.klibs.kstorage.api.LockOwner
+import ru.astrainteractive.klibs.kstorage.api.reuseLock
 
 class DefaultCachedKrate<T>(
     private val instance: Krate<T>,
-) : CachedKrate<T> {
-    private val lock = Lock()
+) : CachedKrate<T>, LockOwner {
+    override val lock = instance.reuseLock()
     private var _cachedValue = lock.withLock { instance.getValue() }
     override val cachedValue: T
         get() = _cachedValue
