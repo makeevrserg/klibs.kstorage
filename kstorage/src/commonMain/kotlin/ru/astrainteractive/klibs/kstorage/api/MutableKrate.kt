@@ -4,6 +4,7 @@ import ru.astrainteractive.klibs.kstorage.api.impl.DefaultCachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 
 /**
  * Represents a mutable key-value container (Krate) that allows both reading and modifying its stored value.
@@ -44,7 +45,8 @@ fun <T : Any> MutableKrate<T?>.withDefault(factory: ValueFactory<T>): MutableKra
     return DefaultMutableKrate(
         factory = factory,
         saver = { value -> save(value) },
-        loader = { getValue() }
+        loader = { getValue() },
+        lockOwner = LockOwner.Reusable(this)
     )
 }
 

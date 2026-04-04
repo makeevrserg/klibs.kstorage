@@ -4,7 +4,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
+import ru.astrainteractive.klibs.kstorage.suspend.impl.FlowToStateFlowSuspendMutableKrate
 
 /**
  * Represents a mutable Krate that exposes its value as a [Flow] while also supporting
@@ -23,6 +25,7 @@ fun <T : Any> FlowMutableKrate<T?>.withDefault(
         factory = factory,
         loader = { flow },
         saver = { value -> save(value) },
+        lockOwner = LockOwner.Reusable(this)
     )
 }
 
@@ -31,32 +34,8 @@ fun <T : Any> FlowMutableKrate<T?>.withDefault(
  * exposing its state as a [StateFlow] that is kept up to date within the given [CoroutineScope].
  */
 fun <T> FlowMutableKrate<T>.asStateFlowSuspendMutableKrate(scope: CoroutineScope): StateFlowSuspendMutableKrate<T> {
-    val instance = this
-    return object : StateFlowSuspendMutableKrate<T> {
-        override val cachedStateFlow: StateFlow<T> = instance.stateFlow(scope)
-
-        override suspend fun getValue(): T {
-            return instance.getValue()
-        }
-
-        override suspend fun save(value: T) {
-            instance.save(value)
-        }
-
-        override suspend fun save(block: suspend (T) -> T) {
-            instance.save(block)
-        }
-
-        override suspend fun saveAndGet(block: suspend (T) -> T): T {
-            return instance.saveAndGet(block)
-        }
-
-        override suspend fun reset() {
-            instance.reset()
-        }
-
-        override suspend fun resetAndGet(): T {
-            return instance.resetAndGet()
-        }
-    }
+    return FlowToStateFlowSuspendMutableKrate(
+        instance = this,
+        scope = scope
+    )
 }

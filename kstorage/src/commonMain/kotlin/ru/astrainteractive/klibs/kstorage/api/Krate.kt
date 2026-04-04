@@ -4,6 +4,7 @@ import ru.astrainteractive.klibs.kstorage.api.impl.DefaultCachedKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowKrate
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 
 /**
  * Represents a key-value container (Krate) that provides synchronous access to its stored value.
@@ -23,7 +24,8 @@ interface Krate<T> {
 fun <T : Any> Krate<T?>.withDefault(factory: ValueFactory<T>): Krate<T> {
     return DefaultKrate(
         factory = factory,
-        loader = { getValue() }
+        loader = { getValue() },
+        lockOwner = LockOwner.Reusable(this)
     )
 }
 

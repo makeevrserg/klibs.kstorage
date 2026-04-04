@@ -1,6 +1,7 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrate
 
 /**
@@ -24,5 +25,6 @@ fun <T : Any> SuspendKrate<T?>.withDefault(
     return DefaultSuspendMutableKrate(
         factory = factory,
         loader = { getValue() },
+        lockOwner = LockOwner.Reusable(this)
     )
 }

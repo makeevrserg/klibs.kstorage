@@ -3,6 +3,7 @@ package ru.astrainteractive.klibs.kstorage.suspend
 import kotlinx.coroutines.CoroutineDispatcher
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultStateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrate
 
@@ -49,7 +50,8 @@ fun <T : Any> SuspendMutableKrate<T?>.asStateFlowSuspendMutableKrate(
         factory = { null },
         loader = { this.getValue() },
         saver = { value -> this.save(value) },
-        coroutineContext = coroutineContext
+        coroutineContext = coroutineContext,
+        lockOwner = LockOwner.Reusable(this)
     )
 }
 
@@ -63,5 +65,6 @@ fun <T : Any> SuspendMutableKrate<T?>.withDefault(
         factory = factory,
         loader = { getValue() },
         saver = { value -> save(value) },
+        lockOwner = LockOwner.Reusable(this)
     )
 }

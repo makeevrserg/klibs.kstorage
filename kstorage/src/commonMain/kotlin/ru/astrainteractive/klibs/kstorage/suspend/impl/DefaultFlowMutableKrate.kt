@@ -19,7 +19,8 @@ class DefaultFlowMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: FlowProvider<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
-) : FlowMutableKrate<T>, LockOwner by LockOwner.Default() {
+    lockOwner: LockOwner = LockOwner.Default()
+) : FlowMutableKrate<T>, LockOwner by lockOwner {
 
     override val flow: Flow<T> = loader.provide()
         .map { value -> value ?: factory.create() }

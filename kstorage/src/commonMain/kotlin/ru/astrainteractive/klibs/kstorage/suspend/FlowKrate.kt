@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
 
 /**
@@ -51,5 +52,6 @@ fun <T : Any> FlowKrate<T?>.withDefault(
     return DefaultFlowMutableKrate(
         factory = factory,
         loader = { flow },
+        lockOwner = LockOwner.Reusable(this)
     )
 }

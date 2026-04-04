@@ -20,8 +20,9 @@ class DefaultStateFlowSuspendMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
-    coroutineContext: CoroutineContext = EmptyCoroutineContext
-) : StateFlowSuspendMutableKrate<T>, LockOwner by LockOwner.Default() {
+    coroutineContext: CoroutineContext = EmptyCoroutineContext,
+    lockOwner: LockOwner = LockOwner.Default()
+) : StateFlowSuspendMutableKrate<T>, LockOwner by lockOwner {
     private val _cachedStateFlow = lock.withLock { MutableStateFlow(factory.create()) }
     override val cachedStateFlow: StateFlow<T> = _cachedStateFlow.asStateFlow()
 

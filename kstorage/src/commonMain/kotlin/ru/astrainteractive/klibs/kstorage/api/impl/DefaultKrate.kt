@@ -8,7 +8,8 @@ import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 class DefaultKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: ValueLoader<T>,
-) : Krate<T>, LockOwner by LockOwner.Default() {
+    lockOwner: LockOwner = LockOwner.Default()
+) : Krate<T>, LockOwner by lockOwner {
 
     override fun getValue(): T {
         return lock.withLock {

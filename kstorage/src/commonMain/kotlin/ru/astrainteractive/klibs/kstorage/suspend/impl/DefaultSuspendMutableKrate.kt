@@ -10,7 +10,8 @@ class DefaultSuspendMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
-) : SuspendMutableKrate<T>, LockOwner by LockOwner.Default() {
+    lockOwner: LockOwner = LockOwner.Default()
+) : SuspendMutableKrate<T>, LockOwner by lockOwner {
 
     override suspend fun getValue(): T {
         return lock.withSuspendLock { loader.loadAndGet() ?: factory.create() }
