@@ -49,7 +49,7 @@ fun <T : Any> SuspendMutableKrate<T?>.asStateFlowSuspendMutableKrate(
         factory = { null },
         loader = { this.getValue() },
         saver = { value -> this.save(value) },
-        coroutineDispatcher = coroutineContext
+        coroutineContext = coroutineContext
     )
 }
 

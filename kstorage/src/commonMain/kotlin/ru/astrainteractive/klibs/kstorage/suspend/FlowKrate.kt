@@ -2,11 +2,11 @@ package ru.astrainteractive.klibs.kstorage.suspend
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
 
 /**
@@ -25,13 +25,13 @@ interface FlowKrate<T> : SuspendKrate<T> {
      *
      * @param coroutineScope The scope in which the StateFlow will be active.
      * @param sharingStarted Defines when the StateFlow starts/stops sharing values.
-     * @param dispatcher The coroutine dispatcher used for state emission.
+     * @param coroutineDispatcher The coroutine dispatcher used for state emission.
      * @return A [StateFlow] instance reflecting the current Krate value.
      */
     fun stateFlow(
         coroutineScope: CoroutineScope,
         sharingStarted: SharingStarted = SharingStarted.Eagerly,
-        dispatcher: CoroutineDispatcher = Dispatchers.Default
+        coroutineDispatcher: CoroutineDispatcher = getIoDispatcher()
     ): StateFlow<T>
 
     /**

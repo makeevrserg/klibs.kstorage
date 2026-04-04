@@ -27,9 +27,9 @@ class DefaultFlowMutableKrate<T>(
     override fun stateFlow(
         coroutineScope: CoroutineScope,
         sharingStarted: SharingStarted,
-        dispatcher: CoroutineDispatcher
+        coroutineDispatcher: CoroutineDispatcher
     ): StateFlow<T> = flow
-        .flowOn(dispatcher)
+        .flowOn(coroutineDispatcher)
         .stateIn(coroutineScope, sharingStarted, factory.create())
 
     override suspend fun getValue(): T {

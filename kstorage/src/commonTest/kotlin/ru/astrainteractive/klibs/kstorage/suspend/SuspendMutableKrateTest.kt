@@ -1,6 +1,5 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.timeout
@@ -20,11 +19,22 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { store.putInt("KEY", it) },
             loader = { null },
-            coroutineDispatcher = Dispatchers.Default
         )
-        assertEquals(factoryValue, krate.cachedStateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
-        assertEquals(factoryValue, krate.cachedStateFlow.value)
+        assertEquals(
+            factoryValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should emit factory value when loader returns null"
+        )
+        assertEquals(
+            factoryValue,
+            krate.getValue(),
+            "getValue() should return factory value when loader returns null"
+        )
+        assertEquals(
+            factoryValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should still emit factory value after getValue()"
+        )
     }
 
     @Test
@@ -42,9 +52,21 @@ internal class SuspendMutableKrateTest {
             },
             loader = { loaderValue },
         )
-        assertEquals(null, krate.cachedStateFlow.value)
-        assertEquals(loaderValue, krate.getValue())
-        assertEquals(loaderValue, krate.cachedStateFlow.value)
+        assertEquals(
+            null,
+            krate.cachedStateFlow.first(),
+            "StateFlow should initially emit null before getValue() is called"
+        )
+        assertEquals(
+            loaderValue,
+            krate.getValue(),
+            "getValue() should return loader value when factory is null"
+        )
+        assertEquals(
+            loaderValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should emit loader value after getValue() is called"
+        )
     }
 
     @Test
@@ -56,11 +78,22 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { store.putInt("KEY", it) },
             loader = { loaderValue },
-            coroutineDispatcher = Dispatchers.Default
         )
-        assertEquals(factoryValue, krate.cachedStateFlow.value)
-        assertEquals(loaderValue, krate.getValue())
-        assertEquals(loaderValue, krate.cachedStateFlow.value)
+        assertEquals(
+            factoryValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should initially emit factory value before load"
+        )
+        assertEquals(
+            loaderValue,
+            krate.getValue(),
+            "getValue() should return loader value over factory value"
+        )
+        assertEquals(
+            loaderValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should emit loader value after getValue()"
+        )
     }
 
     @Test
@@ -71,18 +104,41 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { store.putInt("KEY", it) },
             loader = { store.getIntOrNull("KEY") },
-            coroutineDispatcher = Dispatchers.Default
         )
-        assertEquals(factoryValue, krate.cachedStateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
+        assertEquals(
+            factoryValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should emit factory value for empty store"
+        )
+        assertEquals(
+            factoryValue,
+            krate.getValue(),
+            "getValue() should return factory value for empty store"
+        )
         11.let { newValue ->
             krate.save(newValue)
-            assertEquals(newValue, krate.cachedStateFlow.value)
-            assertEquals(newValue, krate.getValue())
+            assertEquals(
+                newValue,
+                krate.cachedStateFlow.first(),
+                "StateFlow should emit new value after save"
+            )
+            assertEquals(
+                newValue,
+                krate.getValue(),
+                "getValue() should return new value after save"
+            )
         }
         krate.reset()
-        assertEquals(factoryValue, krate.cachedStateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
+        assertEquals(
+            factoryValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should return to factory value after reset"
+        )
+        assertEquals(
+            factoryValue,
+            krate.getValue(),
+            "getValue() should return factory value after reset"
+        )
     }
 
     @Test
@@ -94,20 +150,47 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { store.putInt("KEY", it) },
             loader = { store.getIntOrNull("KEY") },
-            coroutineDispatcher = Dispatchers.Default
         )
-        assertEquals(factoryValue, krate.cachedStateFlow.value)
-        assertEquals(defaultStoreValue, krate.getValue())
-        assertEquals(defaultStoreValue, krate.cachedStateFlow.value)
+        assertEquals(
+            factoryValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should initially emit factory value before load"
+        )
+        assertEquals(
+            defaultStoreValue,
+            krate.getValue(),
+            "getValue() should return pre-filled store value"
+        )
+        assertEquals(
+            defaultStoreValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should emit store value after getValue()"
+        )
         11.let { newValue ->
             krate.save(newValue)
-            assertEquals(newValue, krate.cachedStateFlow.value)
-            assertEquals(newValue, krate.getValue())
+            assertEquals(
+                newValue,
+                krate.cachedStateFlow.first(),
+                "StateFlow should emit new value after save"
+            )
+            assertEquals(
+                newValue,
+                krate.getValue(),
+                "getValue() should return new value after save"
+            )
         }
         store.remove("KEY")
         krate.reset()
-        assertEquals(factoryValue, krate.cachedStateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
+        assertEquals(
+            factoryValue,
+            krate.cachedStateFlow.first(),
+            "StateFlow should return to factory value after reset"
+        )
+        assertEquals(
+            factoryValue,
+            krate.getValue(),
+            "getValue() should return factory value after reset"
+        )
     }
 
     @Test
@@ -118,7 +201,6 @@ internal class SuspendMutableKrateTest {
             factory = { factoryValue },
             saver = { },
             loader = { loadedValue },
-            coroutineDispatcher = Dispatchers.Unconfined
         )
 
         assertEquals(
@@ -126,7 +208,8 @@ internal class SuspendMutableKrateTest {
             actual = krate.cachedStateFlow
                 .filter { value -> value == loadedValue }
                 .timeout(1.seconds)
-                .first()
+                .first(),
+            message = "StateFlow should eventually emit loaded value instead of factory value"
         )
     }
 }

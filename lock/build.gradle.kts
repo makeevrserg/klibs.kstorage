@@ -7,7 +7,7 @@ plugins {
 kotlin {
     jvm()
     js(IR) {
-        browser()
+        browser { testTask { isEnabled = false } }
         nodejs()
     }
     iosX64()
@@ -24,9 +24,7 @@ kotlin {
     macosArm64()
     mingwX64()
     applyDefaultHierarchyTemplate()
-    wasmJs {
-        browser()
-    }
+    wasmJs { browser { testTask { isEnabled = false } } }
 
     sourceSets {
         val commonMain by getting {

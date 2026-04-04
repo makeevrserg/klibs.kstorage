@@ -1,12 +1,10 @@
 package ru.astrainteractive.klibs.kstorage.internal.lock
 
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -18,7 +16,10 @@ internal class LockTest {
         runTest {
             // Just assert it doesn't crash when executing
             val lock = Lock()
-            assertNotNull(lock)
+            assertNotNull(
+                actual = lock,
+                message = "Lock instance should not be null after creation"
+            )
         }
     }
 
@@ -28,7 +29,11 @@ internal class LockTest {
             val lock = Lock()
             val expected = 42
             val actual = lock.withLock { expected }
-            assertEquals(expected, actual)
+            assertEquals(
+                expected = expected,
+                actual = actual,
+                message = "withLock should return the value produced by the block"
+            )
         }
     }
 
@@ -38,7 +43,11 @@ internal class LockTest {
             val lock = Lock()
             var value = 0
             lock.withLock { value = 10 }
-            assertEquals(10, value)
+            assertEquals(
+                expected = 10,
+                actual = value,
+                message = "Side effect inside withLock should be applied"
+            )
         }
     }
 
@@ -49,11 +58,21 @@ internal class LockTest {
             val exception = runCatching {
                 lock.withLock { error("test error") }
             }.exceptionOrNull()
-            assertNotNull(exception)
-            assertTrue(exception is IllegalStateException)
+            assertNotNull(
+                actual = exception,
+                message = "Exception from withLock block should be propagated"
+            )
+            assertTrue(
+                actual = exception is IllegalStateException,
+                message = "Propagated exception should be IllegalStateException"
+            )
             // Verify lock is still usable after exception (proves unlock happened in finally)
             val result = lock.withLock { "recovered" }
-            assertEquals("recovered", result)
+            assertEquals(
+                expected = "recovered",
+                actual = result,
+                message = "Lock should be usable after exception is thrown"
+            )
         }
     }
 
@@ -65,7 +84,11 @@ internal class LockTest {
             lock.withLock { results.add(1) }
             lock.withLock { results.add(2) }
             lock.withLock { results.add(3) }
-            assertEquals(listOf(1, 2, 3), results)
+            assertEquals(
+                expected = listOf(1, 2, 3),
+                actual = results,
+                message = "Sequential withLock calls should execute in order"
+            )
         }
     }
 
@@ -77,7 +100,11 @@ internal class LockTest {
             List(1000) { i -> i }
                 .map { async { lock.withLock { result += 1 } } }
                 .awaitAll()
-            assertEquals(1000, result)
+            assertEquals(
+                expected = 1000,
+                actual = result,
+                message = "After 1000 concurrent increments with lock, result should be 1000"
+            )
         }
     }
 
@@ -88,18 +115,20 @@ internal class LockTest {
             var counter = 0
             val iterationsPerCoroutine = 1000
             val coroutinesCount = 10
-            withContext(Dispatchers.Default) {
-                coroutineScope {
-                    (1..coroutinesCount).map {
-                        async {
-                            repeat(iterationsPerCoroutine) {
-                                lock.withLock { counter++ }
-                            }
+            coroutineScope {
+                (1..coroutinesCount).map {
+                    async {
+                        repeat(iterationsPerCoroutine) {
+                            lock.withLock { counter++ }
                         }
-                    }.awaitAll()
-                }
+                    }
+                }.awaitAll()
             }
-            assertEquals(coroutinesCount * iterationsPerCoroutine, counter)
+            assertEquals(
+                expected = coroutinesCount * iterationsPerCoroutine,
+                actual = counter,
+                message = "Counter should equal total increments after concurrent access with lock"
+            )
         }
     }
 
@@ -110,21 +139,27 @@ internal class LockTest {
             val list = mutableListOf<Int>()
             val coroutinesCount = 10
             val elementsPerCoroutine = 100
-            withContext(Dispatchers.Default) {
-                coroutineScope {
-                    (0 until coroutinesCount).map { coroutineIndex ->
-                        async {
-                            repeat(elementsPerCoroutine) { elementIndex ->
-                                lock.withLock {
-                                    list.add(coroutineIndex * elementsPerCoroutine + elementIndex)
-                                }
+            coroutineScope {
+                (0 until coroutinesCount).map { coroutineIndex ->
+                    async {
+                        repeat(elementsPerCoroutine) { elementIndex ->
+                            lock.withLock {
+                                list.add(coroutineIndex * elementsPerCoroutine + elementIndex)
                             }
                         }
-                    }.awaitAll()
-                }
+                    }
+                }.awaitAll()
             }
-            assertEquals(coroutinesCount * elementsPerCoroutine, list.size)
-            assertEquals(list.size, list.toSet().size)
+            assertEquals(
+                expected = coroutinesCount * elementsPerCoroutine,
+                actual = list.size,
+                message = "List size should equal total elements written concurrently"
+            )
+            assertEquals(
+                expected = list.size,
+                actual = list.toSet().size,
+                message = "All elements should be unique — no duplicates from concurrent writes"
+            )
         }
     }
 
@@ -136,32 +171,40 @@ internal class LockTest {
             val iterationsPerCoroutine = 1000
             val writersCount = 5
             val readersCount = 5
-            withContext(Dispatchers.Default) {
-                coroutineScope {
-                    val writers = (1..writersCount).map {
-                        async(start = CoroutineStart.LAZY) {
-                            repeat(iterationsPerCoroutine) {
-                                lock.withLock {
-                                    val current = sharedValue
-                                    sharedValue = current + 1
-                                }
+            coroutineScope {
+                val writers = (1..writersCount).map {
+                    async(start = CoroutineStart.LAZY) {
+                        repeat(iterationsPerCoroutine) {
+                            lock.withLock {
+                                val current = sharedValue
+                                sharedValue = current + 1
                             }
                         }
                     }
-                    val readers = (1..readersCount).map {
-                        async(start = CoroutineStart.LAZY) {
-                            repeat(iterationsPerCoroutine) {
-                                lock.withLock {
-                                    assertTrue(sharedValue >= 0)
-                                    assertTrue(sharedValue <= writersCount * iterationsPerCoroutine)
-                                }
-                            }
-                        }
-                    }
-                    (writers + readers).awaitAll()
                 }
+                val readers = (1..readersCount).map {
+                    async(start = CoroutineStart.LAZY) {
+                        repeat(iterationsPerCoroutine) {
+                            lock.withLock {
+                                assertTrue(
+                                    actual = sharedValue >= 0,
+                                    message = "Shared value should never be negative during concurrent reads"
+                                )
+                                assertTrue(
+                                    actual = sharedValue <= writersCount * iterationsPerCoroutine,
+                                    message = "Shared value should not exceed total expected increments"
+                                )
+                            }
+                        }
+                    }
+                }
+                (writers + readers).awaitAll()
             }
-            assertEquals(writersCount * iterationsPerCoroutine, sharedValue)
+            assertEquals(
+                expected = writersCount * iterationsPerCoroutine,
+                actual = sharedValue,
+                message = "Shared value should equal total writer increments after all coroutines complete"
+            )
         }
     }
 }

@@ -1,7 +1,6 @@
 package ru.astrainteractive.klibs.kstorage.api
 
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.test.runTest
@@ -30,9 +29,21 @@ internal class CachedMutableKrateTest {
                 createKrate.invoke().asStateFlowKrate(),
                 createKrate.invoke().asStateFlowMutableKrate(),
             ).forEach { krate ->
-                assertEquals(factoryValue, krate.cachedValue)
-                assertEquals(factoryValue, krate.getValue())
-                assertEquals(factoryValue, krate.cachedValue)
+                assertEquals(
+                    expected = factoryValue,
+                    actual = krate.cachedValue,
+                    message = "Initial cachedValue should equal factory value when loader returns null"
+                )
+                assertEquals(
+                    expected = factoryValue,
+                    actual = krate.getValue(),
+                    message = "getValue() should return factory value when loader returns null"
+                )
+                assertEquals(
+                    expected = factoryValue,
+                    actual = krate.cachedValue,
+                    message = "cachedValue after getValue() should still equal factory value"
+                )
             }
         }
 
@@ -59,9 +70,21 @@ internal class CachedMutableKrateTest {
             createKrate.invoke().asStateFlowKrate(),
             createKrate.invoke().asStateFlowMutableKrate(),
         ).forEach { krate ->
-            assertEquals(loaderValue, krate.cachedValue)
-            assertEquals(loaderValue, krate.getValue())
-            assertEquals(loaderValue, krate.cachedValue)
+            assertEquals(
+                expected = loaderValue,
+                actual = krate.cachedValue,
+                message = "Initial cachedValue should equal loader value when factory is null"
+            )
+            assertEquals(
+                expected = loaderValue,
+                actual = krate.getValue(),
+                message = "getValue() should return loader value when factory is null"
+            )
+            assertEquals(
+                expected = loaderValue,
+                actual = krate.cachedValue,
+                message = "cachedValue after getValue() should still equal loader value"
+            )
         }
     }
 
@@ -84,9 +107,21 @@ internal class CachedMutableKrateTest {
                 createKrate.invoke().asStateFlowKrate(),
                 createKrate.invoke().asStateFlowMutableKrate(),
             ).forEach { krate ->
-                assertEquals(loaderValue, krate.cachedValue)
-                assertEquals(loaderValue, krate.getValue())
-                assertEquals(loaderValue, krate.cachedValue)
+                assertEquals(
+                    expected = loaderValue,
+                    actual = krate.cachedValue,
+                    message = "cachedValue should equal loader value when both factory and loader are present"
+                )
+                assertEquals(
+                    expected = loaderValue,
+                    actual = krate.getValue(),
+                    message = "getValue() should return loader value over factory value"
+                )
+                assertEquals(
+                    expected = loaderValue,
+                    actual = krate.cachedValue,
+                    message = "cachedValue after getValue() should still equal loader value"
+                )
             }
         }
 
@@ -105,16 +140,40 @@ internal class CachedMutableKrateTest {
             createKrate.invoke().asCachedMutableKrate(),
             createKrate.invoke().asStateFlowMutableKrate(),
         ).forEach { krate ->
-            assertEquals(factoryValue, krate.cachedValue)
-            assertEquals(factoryValue, krate.getValue())
+            assertEquals(
+                expected = factoryValue,
+                actual = krate.cachedValue,
+                message = "Initial cachedValue should equal factory value for empty store"
+            )
+            assertEquals(
+                expected = factoryValue,
+                actual = krate.getValue(),
+                message = "Initial getValue() should return factory value for empty store"
+            )
             11.let { newValue ->
                 krate.save(newValue)
-                assertEquals(newValue, krate.cachedValue)
-                assertEquals(newValue, krate.getValue())
+                assertEquals(
+                    expected = newValue,
+                    actual = krate.cachedValue,
+                    message = "cachedValue should equal new value after save"
+                )
+                assertEquals(
+                    expected = newValue,
+                    actual = krate.getValue(),
+                    message = "getValue() should return new value after save"
+                )
             }
             krate.reset()
-            assertEquals(factoryValue, krate.cachedValue)
-            assertEquals(factoryValue, krate.getValue())
+            assertEquals(
+                expected = factoryValue,
+                actual = krate.cachedValue,
+                message = "cachedValue should return to factory value after reset"
+            )
+            assertEquals(
+                expected = factoryValue,
+                actual = krate.getValue(),
+                message = "getValue() should return factory value after reset"
+            )
         }
     }
 
@@ -137,17 +196,41 @@ internal class CachedMutableKrateTest {
             store.clear()
             store.putInt("KEY", defaultStoreValue)
 
-            assertEquals(defaultStoreValue, krate.cachedValue)
-            assertEquals(defaultStoreValue, krate.getValue())
+            assertEquals(
+                expected = defaultStoreValue,
+                actual = krate.cachedValue,
+                message = "Initial cachedValue should equal pre-filled store value"
+            )
+            assertEquals(
+                expected = defaultStoreValue,
+                actual = krate.getValue(),
+                message = "Initial getValue() should return pre-filled store value"
+            )
             11.let { newValue ->
                 krate.save(newValue)
-                assertEquals(newValue, krate.cachedValue)
-                assertEquals(newValue, krate.getValue())
+                assertEquals(
+                    expected = newValue,
+                    actual = krate.cachedValue,
+                    message = "cachedValue should equal new value after save"
+                )
+                assertEquals(
+                    expected = newValue,
+                    actual = krate.getValue(),
+                    message = "getValue() should return new value after save"
+                )
             }
             store.remove("KEY")
             krate.reset()
-            assertEquals(factoryValue, krate.cachedValue)
-            assertEquals(factoryValue, krate.getValue())
+            assertEquals(
+                expected = factoryValue,
+                actual = krate.cachedValue,
+                message = "cachedValue should return to factory value after reset"
+            )
+            assertEquals(
+                expected = factoryValue,
+                actual = krate.getValue(),
+                message = "getValue() should return factory value after reset"
+            )
         }
     }
 
@@ -166,13 +249,14 @@ internal class CachedMutableKrateTest {
             createKrate.invoke().asStateFlowMutableKrate(),
         ).onEach { krate ->
             List(500) {
-                async(
-                    Dispatchers.Default,
-                    start = CoroutineStart.LAZY
-                ) { krate.save { value -> value + 1 } }
+                async(start = CoroutineStart.LAZY) { krate.save { value -> value + 1 } }
             }.awaitAll()
         }.onEach { krate ->
-            assertEquals(1000, krate.getValue())
+            assertEquals(
+                expected = 1000,
+                actual = krate.getValue(),
+                message = "After 500 concurrent increments per krate, total should be 1000"
+            )
         }
     }
 }

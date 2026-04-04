@@ -31,7 +31,7 @@ fun <T : Any> StateFlowSuspendKrate<T?>.withDefault(
     return DefaultStateFlowSuspendMutableKrate(
         factory = factory,
         loader = { getValue() },
-        coroutineDispatcher = coroutineContext
+        coroutineContext = coroutineContext
     )
 }
 

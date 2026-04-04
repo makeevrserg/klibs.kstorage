@@ -1,6 +1,5 @@
 package ru.astrainteractive.klibs.kstorage.suspend.impl
 
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -10,18 +9,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
-import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
 import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueLoader
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver
+import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 class DefaultStateFlowSuspendMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
-    coroutineDispatcher: CoroutineDispatcher = getIoDispatcher()
+    coroutineContext: CoroutineContext = EmptyCoroutineContext
 ) : StateFlowSuspendMutableKrate<T>, LockOwner by LockOwner.Default() {
     private val _cachedStateFlow = lock.withLock { MutableStateFlow(factory.create()) }
     override val cachedStateFlow: StateFlow<T> = _cachedStateFlow.asStateFlow()
@@ -80,7 +79,7 @@ class DefaultStateFlowSuspendMutableKrate<T>(
     init {
         val scope = CoroutineScope(SupervisorJob() + EmptyCoroutineContext)
         scope
-            .launch(coroutineDispatcher) { getValue() }
+            .launch(coroutineContext) { getValue() }
             .invokeOnCompletion { scope.cancel() }
             .dispose()
     }
