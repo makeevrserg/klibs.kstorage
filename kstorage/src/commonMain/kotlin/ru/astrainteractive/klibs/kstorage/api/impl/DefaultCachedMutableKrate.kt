@@ -2,27 +2,57 @@ package ru.astrainteractive.klibs.kstorage.api.impl
 
 import ru.astrainteractive.klibs.kstorage.api.CachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 
 class DefaultCachedMutableKrate<T>(
     private val instance: MutableKrate<T>,
-) : CachedMutableKrate<T> {
-    private var _cachedValue = instance.getValue()
+) : CachedMutableKrate<T>, LockOwner by LockOwner.Reusable(instance) {
+    private var _cachedValue = lock.withLock { instance.getValue() }
     override val cachedValue: T
         get() = _cachedValue
 
     override fun save(value: T) {
-        _cachedValue = value
-        instance.save(value)
+        lock.withLock {
+            _cachedValue = value
+            instance.save(value)
+        }
     }
 
     override fun reset() {
-        instance.reset()
-        _cachedValue = instance.getValue()
+        lock.withLock {
+            instance.reset()
+            _cachedValue = instance.getValue()
+        }
+    }
+
+    override fun resetAndGet(): T {
+        return lock.withLock {
+            val currentValue = instance.resetAndGet()
+            _cachedValue = currentValue
+            currentValue
+        }
+    }
+
+    override fun save(block: (T) -> T) {
+        lock.withLock {
+            val currentValue = instance.saveAndGet(block)
+            _cachedValue = currentValue
+        }
+    }
+
+    override fun saveAndGet(block: (T) -> T): T {
+        return lock.withLock {
+            val currentValue = instance.saveAndGet(block)
+            _cachedValue = currentValue
+            currentValue
+        }
     }
 
     override fun getValue(): T {
-        val value = instance.getValue()
-        _cachedValue = value
-        return value
+        return lock.withLock {
+            val value = instance.getValue()
+            _cachedValue = value
+            value
+        }
     }
 }

@@ -3,8 +3,10 @@ package ru.astrainteractive.klibs.kstorage.suspend
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import com.russhwolf.settings.observable.makeObservable
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import ru.astrainteractive.klibs.kstorage.settings.MapSettings
 import ru.astrainteractive.klibs.kstorage.suspend.krate.SettingsFlowMutableKrate
@@ -12,10 +14,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class FlowMutableKrateTest {
-    private fun createSettings(): FlowSettings {
+    private fun TestScope.createSettings(): FlowSettings {
         return MapSettings()
             .makeObservable()
-            .toFlowSettings(UnconfinedTestDispatcher())
+            .toFlowSettings(UnconfinedTestDispatcher(testScheduler))
     }
 
     @Test
@@ -26,10 +28,25 @@ internal class FlowMutableKrateTest {
             key = "KEY_1",
             settings = createSettings()
         )
-        val stateFlow = krate.stateFlow(TestScope())
-        assertEquals(factoryValue, stateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
-        assertEquals(factoryValue, stateFlow.value)
+        val stateFlow = krate.stateFlow(
+            coroutineScope = backgroundScope,
+            coroutineDispatcher = UnconfinedTestDispatcher(testScheduler)
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = stateFlow.first(),
+            message = "StateFlow should emit factory value when loader is null"
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = krate.getValue(),
+            message = "getValue() should return factory value when loader is null"
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = stateFlow.first(),
+            message = "StateFlow should still emit factory value on subsequent reads"
+        )
     }
 
     @Test
@@ -40,10 +57,25 @@ internal class FlowMutableKrateTest {
             key = "KEY_2",
             settings = createSettings()
         )
-        val stateFlow = krate.stateFlow(TestScope())
-        assertEquals(factoryValue, stateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
-        assertEquals(factoryValue, stateFlow.value)
+        val stateFlow = krate.stateFlow(
+            coroutineScope = backgroundScope,
+            coroutineDispatcher = UnconfinedTestDispatcher(testScheduler)
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = stateFlow.first(),
+            message = "StateFlow should emit factory value initially"
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = krate.getValue(),
+            message = "getValue() should return factory value initially"
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = stateFlow.first(),
+            message = "StateFlow should still emit factory value on subsequent reads"
+        )
     }
 
     @Test
@@ -54,17 +86,47 @@ internal class FlowMutableKrateTest {
             key = "KEY_3",
             settings = createSettings()
         )
-        val stateFlow = krate.stateFlow(backgroundScope)
-        assertEquals(factoryValue, stateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
+        val stateFlow = krate.stateFlow(
+            coroutineScope = backgroundScope,
+            coroutineDispatcher = UnconfinedTestDispatcher(testScheduler)
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = stateFlow.first(),
+            message = "StateFlow should emit factory value for empty store"
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = krate.getValue(),
+            message = "getValue() should return factory value for empty store"
+        )
         11.let { newValue ->
             krate.save(newValue)
-            assertEquals(newValue, stateFlow.value)
-            assertEquals(newValue, krate.getValue())
+            advanceUntilIdle()
+            assertEquals(
+                expected = newValue,
+                actual = krate.getValue(),
+                message = "getValue() should return new value after save"
+            )
+            assertEquals(
+                expected = newValue,
+                actual = stateFlow.first(),
+                message = "StateFlow should emit new value after save"
+            )
         }
         krate.reset()
-        assertEquals(factoryValue, stateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
+        advanceUntilIdle()
+
+        assertEquals(
+            expected = factoryValue,
+            actual = stateFlow.first(),
+            message = "After reset StateFlow should be back to factory value"
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = krate.getValue(),
+            message = "After reset getValue() should return factory value"
+        )
     }
 
     @Test
@@ -75,17 +137,50 @@ internal class FlowMutableKrateTest {
             key = "KEY_4",
             settings = createSettings()
         )
-        val stateFlow = krate.stateFlow(TestScope())
-        assertEquals(factoryValue, stateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
-        assertEquals(factoryValue, stateFlow.value)
+        val stateFlow = krate.stateFlow(
+            coroutineScope = backgroundScope,
+            coroutineDispatcher = UnconfinedTestDispatcher(testScheduler)
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = stateFlow.first(),
+            message = "StateFlow should emit factory value initially"
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = krate.getValue(),
+            message = "getValue() should return factory value initially"
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = stateFlow.first(),
+            message = "StateFlow should still emit factory value on subsequent reads"
+        )
         11.let { newValue ->
             krate.save(newValue)
-            assertEquals(newValue, stateFlow.value)
-            assertEquals(newValue, krate.getValue())
+            advanceUntilIdle()
+            assertEquals(
+                expected = newValue,
+                actual = stateFlow.first(),
+                message = "StateFlow should emit new value after save"
+            )
+            assertEquals(
+                expected = newValue,
+                actual = krate.getValue(),
+                message = "getValue() should return new value after save"
+            )
         }
         krate.reset()
-        assertEquals(factoryValue, stateFlow.value)
-        assertEquals(factoryValue, krate.getValue())
+        advanceUntilIdle()
+        assertEquals(
+            expected = factoryValue,
+            actual = stateFlow.first(),
+            message = "After reset krate should be back to factory value"
+        )
+        assertEquals(
+            expected = factoryValue,
+            actual = krate.getValue(),
+            message = "After reset StateFlow should be back to factory value"
+        )
     }
 }

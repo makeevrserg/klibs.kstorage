@@ -1,6 +1,7 @@
 package ru.astrainteractive.klibs.kstorage.suspend.impl
 
 import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
+import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueLoader
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver
@@ -9,18 +10,46 @@ class DefaultSuspendMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
-) : SuspendMutableKrate<T> {
+    lockOwner: LockOwner = LockOwner.Default()
+) : SuspendMutableKrate<T>, LockOwner by lockOwner {
+
     override suspend fun getValue(): T {
-        val value = loader.loadAndGet() ?: factory.create()
-        return value
+        return lock.withSuspendLock { loader.loadAndGet() ?: factory.create() }
     }
 
     override suspend fun save(value: T) {
-        saver.save(value)
+        lock.withSuspendLock { saver.save(value) }
+    }
+
+    override suspend fun save(block: suspend (T) -> T) {
+        lock.withSuspendLock {
+            val oldValue = getValue()
+            val newValue = block.invoke(oldValue)
+            save(newValue)
+        }
     }
 
     override suspend fun reset() {
-        val default = factory.create()
-        save(default)
+        lock.withSuspendLock {
+            val default = factory.create()
+            saver.save(default)
+        }
+    }
+
+    override suspend fun resetAndGet(): T {
+        return lock.withSuspendLock {
+            val default = factory.create()
+            saver.save(default)
+            default
+        }
+    }
+
+    override suspend fun saveAndGet(block: suspend (T) -> T): T {
+        return lock.withSuspendLock {
+            val oldValue = getValue()
+            val newValue = block.invoke(oldValue)
+            save(newValue)
+            newValue
+        }
     }
 }

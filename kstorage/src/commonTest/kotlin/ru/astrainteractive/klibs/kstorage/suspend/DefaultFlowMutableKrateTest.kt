@@ -1,10 +1,11 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
 import kotlin.test.Test
@@ -19,9 +20,21 @@ class DefaultFlowMutableKrateTest {
             factory = { null },
             loader = { flowOf() },
         )
-        assertNull(krate.flow.firstOrNull())
-        assertNull(krate.getValue())
-        assertNull(krate.stateFlow(backgroundScope).first())
+        assertNull(
+            actual = krate.flow.firstOrNull(),
+            message = "Flow first value should be null when no value is provided"
+        )
+        assertNull(
+            actual = krate.getValue(),
+            message = "getValue() should return null when factory is null and loader is empty"
+        )
+        assertNull(
+            actual = krate.stateFlow(
+                coroutineScope = backgroundScope,
+                coroutineDispatcher = UnconfinedTestDispatcher(testScheduler)
+            ).first(),
+            message = "StateFlow first value should be null when no value is provided"
+        )
     }
 
     @Test
@@ -30,9 +43,24 @@ class DefaultFlowMutableKrateTest {
             factory = { null },
             loader = { flowOf(1) },
         )
-        assertEquals(1, krate.flow.filterNotNull().first())
-        assertEquals(1, krate.getValue())
-        assertEquals(1, krate.stateFlow(backgroundScope).first())
+        assertEquals(
+            expected = 1,
+            actual = krate.flow.first(),
+            message = "Flow should emit loader value when factory is null"
+        )
+        assertEquals(
+            expected = 1,
+            actual = krate.getValue(),
+            message = "getValue() should return loader value when factory is null"
+        )
+        assertEquals(
+            expected = 1,
+            actual = krate.stateFlow(
+                coroutineScope = backgroundScope,
+                coroutineDispatcher = UnconfinedTestDispatcher(testScheduler)
+            ).first(),
+            message = "StateFlow should emit loader value when factory is null"
+        )
     }
 
     @Test
@@ -41,9 +69,24 @@ class DefaultFlowMutableKrateTest {
             factory = { 1 },
             loader = { flowOf() },
         )
-        assertNull(krate.flow.filterNotNull().firstOrNull())
-        assertEquals(1, krate.getValue())
-        assertEquals(1, krate.stateFlow(backgroundScope).first())
+        advanceUntilIdle()
+        assertNull(
+            actual = krate.flow.firstOrNull(),
+            message = "Flow should emit null when loader is empty"
+        )
+        assertEquals(
+            expected = 1,
+            actual = krate.getValue(),
+            message = "getValue() should return factory value when loader is empty"
+        )
+        assertEquals(
+            expected = 1,
+            actual = krate.stateFlow(
+                coroutineScope = backgroundScope,
+                coroutineDispatcher = UnconfinedTestDispatcher(testScheduler)
+            ).first(),
+            message = "StateFlow should return factory value when loader is empty"
+        )
     }
 
     @Test
@@ -53,9 +96,23 @@ class DefaultFlowMutableKrateTest {
             loader = { flowOf() },
             saver = {}
         )
-        assertNull(krate.flow.filterNotNull().firstOrNull())
-        assertEquals(1, krate.getValue())
-        assertEquals(1, krate.stateFlow(backgroundScope).first())
+        assertNull(
+            actual = krate.flow.firstOrNull(),
+            message = "Recreated flow should emit null when loader is empty"
+        )
+        assertEquals(
+            expected = 1,
+            actual = krate.getValue(),
+            message = "getValue() should return factory value for recreated flow krate"
+        )
+        assertEquals(
+            expected = 1,
+            actual = krate.stateFlow(
+                coroutineScope = backgroundScope,
+                coroutineDispatcher = UnconfinedTestDispatcher(testScheduler)
+            ).first(),
+            message = "StateFlow should return factory value for recreated flow krate"
+        )
     }
 
     @Test
@@ -66,10 +123,26 @@ class DefaultFlowMutableKrateTest {
             loader = { stateFlow },
             saver = { stateFlow.emit(it) }
         )
-        assertEquals(1, krate.getValue())
-        assertEquals(1, krate.flow.first())
+        assertEquals(
+            expected = 1,
+            actual = krate.getValue(),
+            message = "Initial getValue() should return factory value"
+        )
+        assertEquals(
+            expected = 1,
+            actual = krate.flow.first(),
+            message = "Initial flow value should equal factory value"
+        )
         krate.save(2)
-        assertEquals(2, krate.getValue())
-        assertEquals(2, krate.flow.first())
+        assertEquals(
+            expected = 2,
+            actual = krate.getValue(),
+            message = "getValue() should return saved value after save"
+        )
+        assertEquals(
+            expected = 2,
+            actual = krate.flow.first(),
+            message = "Flow should emit saved value after save"
+        )
     }
 }

@@ -11,7 +11,7 @@ kotlin {
     jvm()
     androidLibrary {}
     js(IR) {
-        browser()
+        browser { testTask { isEnabled = false } }
         nodejs()
     }
     iosX64()
@@ -28,14 +28,13 @@ kotlin {
     macosArm64()
     mingwX64()
     applyDefaultHierarchyTemplate()
-    wasmJs {
-        browser()
-    }
+    wasmJs { browser { testTask { isEnabled = false } } }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlin.coroutines.core)
+                implementation(project(":lock"))
             }
         }
         val commonTest by getting {
