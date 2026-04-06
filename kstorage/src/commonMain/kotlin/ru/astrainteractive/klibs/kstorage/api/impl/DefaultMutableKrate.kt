@@ -6,7 +6,7 @@ import ru.astrainteractive.klibs.kstorage.api.value.ValueLoader
 import ru.astrainteractive.klibs.kstorage.api.value.ValueSaver
 import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 
-class DefaultMutableKrate<T> internal constructor(
+class DefaultMutableKrate<T>(
     private val factory: ValueFactory<T>,
     private val saver: ValueSaver<T> = ValueSaver.Empty(),
     private val loader: ValueLoader<T>,
