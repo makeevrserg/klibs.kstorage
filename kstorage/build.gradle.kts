@@ -7,6 +7,7 @@ plugins {
     id("ru.astrainteractive.gradleplugin.publication")
     id("ru.astrainteractive.gradleplugin.android.namespace")
 }
+
 kotlin {
     jvm()
     androidLibrary {}

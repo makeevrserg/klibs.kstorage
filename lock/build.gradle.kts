@@ -2,8 +2,9 @@
 
 plugins {
     kotlin("multiplatform")
-    id("ru.astrainteractive.gradleplugin.android.sdk")
+    id("ru.astrainteractive.gradleplugin.publication")
 }
+
 kotlin {
     jvm()
     js(IR) {
