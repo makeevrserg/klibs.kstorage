@@ -1,8 +1,10 @@
 @file:Suppress("UnusedPrivateMember")
 
 plugins {
-    kotlin("multiplatform")
+    id("org.jetbrains.kotlin.multiplatform")
     id("ru.astrainteractive.gradleplugin.publication")
+    id("ru.astrainteractive.gradleplugin.detekt")
+    id("ru.astrainteractive.gradleplugin.rootinfo")
 }
 
 kotlin {
