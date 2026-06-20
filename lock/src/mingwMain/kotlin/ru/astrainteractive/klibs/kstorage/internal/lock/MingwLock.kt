@@ -14,28 +14,37 @@ import platform.posix.pthread_mutexattr_destroy
 import platform.posix.pthread_mutexattr_init
 import platform.posix.pthread_mutexattr_settype
 import platform.posix.pthread_mutexattr_tVar
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.decrementAndFetch
+import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.ref.createCleaner
 
 /**
  * @author https://github.com/arkivanov
  */
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, ExperimentalAtomicApi::class)
 class MingwLock : Lock {
     private val resources = Resources()
 
     @Suppress("unused") // Must be assigned
     @OptIn(ExperimentalNativeApi::class)
     private val cleaner = createCleaner(resources, Resources::destroy)
-    override var isLocked: Boolean = false
+
+    private val lockDepth = AtomicInt(0)
+
+    override val isLocked: Boolean
+        get() = lockDepth.load() > 0
+
     private fun lock() {
         pthread_mutex_lock(resources.mutex.ptr)
-        isLocked = true
+        lockDepth.incrementAndFetch()
     }
 
     private fun unlock() {
+        lockDepth.decrementAndFetch()
         pthread_mutex_unlock(resources.mutex.ptr)
-        isLocked = false
     }
 
     override fun <T> withLock(block: () -> T): T {

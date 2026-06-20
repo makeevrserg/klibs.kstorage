@@ -1,18 +1,26 @@
 package ru.astrainteractive.klibs.kstorage.internal.lock
 
 class JsLock : Lock {
-    override var isLocked: Boolean = false
+    private var lockDepth = 0
+
+    override val isLocked: Boolean
+        get() = lockDepth > 0
+
     override fun <T> withLock(block: () -> T): T {
-        isLocked = true
-        val value = block.invoke()
-        isLocked = false
-        return value
+        lockDepth += 1
+        return try {
+            block.invoke()
+        } finally {
+            lockDepth -= 1
+        }
     }
 
     override suspend fun <T> withSuspendLock(block: suspend () -> T): T {
-        isLocked = true
-        val value = block.invoke()
-        isLocked = false
-        return value
+        lockDepth += 1
+        return try {
+            block.invoke()
+        } finally {
+            lockDepth -= 1
+        }
     }
 }
