@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
 jobs:
   gradle_validation:
-    name: Validate gradle wrapper
+    name: Validate Gradle wrapper
     uses: ./.github/workflows/call-gradle-wrapper-validation.yml
   release:
-    name: Release
+    name: Publish release
     needs: gradle_validation
     uses: ./.github/workflows/call-release.yml
     secrets:

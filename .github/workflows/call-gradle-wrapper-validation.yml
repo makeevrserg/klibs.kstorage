@@ -1,12 +1,13 @@
-name: "gradle-wrapper-validation"
+name: "Validate Gradle wrapper"
 on:
   workflow_call:
 
 jobs:
   validation:
-    name: "Gradle Wrapper Validation"
+    name: "Verify gradle-wrapper.jar checksum"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v3
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Verify Gradle wrapper checksum
+        uses: gradle/wrapper-validation-action@f9c9c575b8b21b6485636a91ffecd10e558c62f6 # v3

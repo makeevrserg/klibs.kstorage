@@ -1,4 +1,4 @@
-name: Pull request
+name: Pull request checks
 on:
   pull_request:
     branches:
@@ -22,17 +22,18 @@ concurrency:
 
 jobs:
   gradle_validation:
-    name: Validate gradle wrapper
+    name: Validate Gradle wrapper
     uses: ./.github/workflows/call-gradle-wrapper-validation.yml
   detekt_validation:
-    name: Check by detekt
+    name: Detekt static analysis
     needs: gradle_validation
     uses: ./.github/workflows/call-detekt-validation.yml
   tests_validation:
+    name: Tests
     needs: gradle_validation
     uses: ./.github/workflows/call-tests-validation.yml
   publish_validation:
-    name: Check publish
+    name: Validate publication
     needs: gradle_validation
     uses: ./.github/workflows/call-publish-validation.yml
     secrets:
