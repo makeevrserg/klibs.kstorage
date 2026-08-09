@@ -1,4 +1,4 @@
-name: "Release version"
+name: "Publish release"
 on:
   workflow_call:
     secrets:
@@ -15,7 +15,7 @@ on:
 
 jobs:
   publish:
-    name: "Publish on MavenCentral"
+    name: "Publish to Maven Central"
     runs-on: ubuntu-latest
     env:
       ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME }}
@@ -24,37 +24,40 @@ jobs:
       ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYID }}
       ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGINMEMORYKEYPASSWORD }}
     steps:
-      - uses: actions/checkout@v6
-      - name: Set up JDK 1.21
-        uses: actions/setup-java@v5
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up JDK 21
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
         with:
           distribution: 'temurin'
           java-version: '21'
-      - name: Give gradle permission
+      - name: Make gradlew executable
         run: chmod +x gradlew
-      - name: Run publish
-        uses: gradle/gradle-build-action@v3
+      - name: Publish and release to Maven Central
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3
         with:
           arguments: publishAndReleaseToMavenCentral --stacktrace
   release:
     needs: [ publish ]
-    name: Create GitHub release
+    name: "Create GitHub release"
     runs-on: ubuntu-latest
     # Only for personal repositories
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
-      # steps.properties.outputs.project-version-string
-      # steps.properties.outputs.project-name
-      - uses: christian-draeger/read-properties@1.1.1
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      #   steps.properties.outputs.klibs-project-name
+      #   steps.properties.outputs.klibs-project-version-string
+      - name: Read project name and version from gradle.properties
+        uses: christian-draeger/read-properties@908f99d3334be3802ec7cb528395a69d19914e7b # 1.1.1
         id: properties
         with:
           path: './gradle.properties'
           properties: 'klibs.project.name klibs.project.version.string'
-      - name: Create Release
+      - name: Create GitHub release
         id: create_release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
         with:
