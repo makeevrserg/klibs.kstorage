@@ -1,7 +1,9 @@
+**/build
+.claude
 .gradle
 .idea
 .kotlin
-build
-kstorage/build
+AGENTS.md
+CLAUDE.md
+kotlin-js-store
 local.properties
-kotlin-js-store/*
