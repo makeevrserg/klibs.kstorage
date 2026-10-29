@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueLoader
@@ -17,18 +16,18 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 class DefaultStateFlowSuspendMutableKrate<T>(
-    private val factory: ValueFactory<T>,
+    private val factory: () -> T,
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
     coroutineContext: CoroutineContext = EmptyCoroutineContext,
     lockOwner: LockOwner = LockOwner.Default()
 ) : StateFlowSuspendMutableKrate<T>, LockOwner by lockOwner {
-    private val _cachedStateFlow = lock.withLock { MutableStateFlow(factory.create()) }
+    private val _cachedStateFlow = lock.withLock { MutableStateFlow(factory.invoke()) }
     override val cachedStateFlow: StateFlow<T> = _cachedStateFlow.asStateFlow()
 
     override suspend fun getValue(): T {
         return lock.withSuspendLock {
-            val value = loader.loadAndGet() ?: factory.create()
+            val value = loader.loadAndGet() ?: factory.invoke()
             _cachedStateFlow.update { value }
             value
         }
@@ -52,7 +51,7 @@ class DefaultStateFlowSuspendMutableKrate<T>(
 
     override suspend fun saveAndGet(block: suspend (T) -> T): T {
         return lock.withSuspendLock {
-            val oldValue = loader.loadAndGet() ?: factory.create()
+            val oldValue = loader.loadAndGet() ?: factory.invoke()
             val newValue = block.invoke(oldValue)
             _cachedStateFlow.update { newValue }
             saver.save(newValue)
@@ -62,7 +61,7 @@ class DefaultStateFlowSuspendMutableKrate<T>(
 
     override suspend fun reset() {
         lock.withSuspendLock {
-            val default = factory.create()
+            val default = factory.invoke()
             _cachedStateFlow.update { default }
             saver.save(default)
         }
@@ -70,7 +69,7 @@ class DefaultStateFlowSuspendMutableKrate<T>(
 
     override suspend fun resetAndGet(): T {
         return lock.withSuspendLock {
-            val default = factory.create()
+            val default = factory.invoke()
             _cachedStateFlow.update { default }
             saver.save(default)
             default

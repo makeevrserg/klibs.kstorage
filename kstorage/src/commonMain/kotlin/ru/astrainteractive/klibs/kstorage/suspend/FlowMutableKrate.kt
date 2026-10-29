@@ -3,7 +3,6 @@ package ru.astrainteractive.klibs.kstorage.suspend
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.FlowToStateFlowSuspendMutableKrate
@@ -19,7 +18,7 @@ interface FlowMutableKrate<T> : FlowKrate<T>, SuspendMutableKrate<T>
  * Converts a nullable FlowMutableKrate to a non-nullable one by using a default factory.
  */
 fun <T : Any> FlowMutableKrate<T?>.withDefault(
-    factory: ValueFactory<T>,
+    factory: () -> T,
 ): FlowMutableKrate<T> {
     return DefaultFlowMutableKrate(
         factory = factory,

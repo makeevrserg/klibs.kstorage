@@ -2,7 +2,6 @@ package ru.astrainteractive.klibs.kstorage.suspend
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
-import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
 import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultStateFlowSuspendMutableKrate
@@ -19,7 +18,7 @@ interface StateFlowSuspendMutableKrate<T> : StateFlowSuspendKrate<T>, SuspendMut
  * Adds a default value fallback to a nullable StateFlowSuspendMutableKrate, returning a non-nullable variant.
  */
 fun <T : Any> StateFlowSuspendMutableKrate<T?>.withDefault(
-    factory: ValueFactory<T>,
+    factory: () -> T,
     coroutineContext: CoroutineDispatcher = getIoDispatcher()
 ): StateFlowSuspendMutableKrate<T> {
     return DefaultStateFlowSuspendMutableKrate(

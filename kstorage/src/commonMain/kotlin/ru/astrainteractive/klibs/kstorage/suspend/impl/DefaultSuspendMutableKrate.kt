@@ -1,20 +1,19 @@
 package ru.astrainteractive.klibs.kstorage.suspend.impl
 
-import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueLoader
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver
 
 class DefaultSuspendMutableKrate<T>(
-    private val factory: ValueFactory<T>,
+    private val factory: () -> T,
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),
     lockOwner: LockOwner = LockOwner.Default()
 ) : SuspendMutableKrate<T>, LockOwner by lockOwner {
 
     override suspend fun getValue(): T {
-        return lock.withSuspendLock { loader.loadAndGet() ?: factory.create() }
+        return lock.withSuspendLock { loader.loadAndGet() ?: factory.invoke() }
     }
 
     override suspend fun save(value: T) {
@@ -31,14 +30,14 @@ class DefaultSuspendMutableKrate<T>(
 
     override suspend fun reset() {
         lock.withSuspendLock {
-            val default = factory.create()
+            val default = factory.invoke()
             saver.save(default)
         }
     }
 
     override suspend fun resetAndGet(): T {
         return lock.withSuspendLock {
-            val default = factory.create()
+            val default = factory.invoke()
             saver.save(default)
             default
         }

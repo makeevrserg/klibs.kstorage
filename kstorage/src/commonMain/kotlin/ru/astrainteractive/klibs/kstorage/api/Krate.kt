@@ -3,7 +3,6 @@ package ru.astrainteractive.klibs.kstorage.api
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultCachedKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowKrate
-import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 
 /**
@@ -21,7 +20,7 @@ interface Krate<T> {
 /**
  * Converts a nullable Krate into a non-nullable one by supplying a default value via factory.
  */
-fun <T : Any> Krate<T?>.withDefault(factory: ValueFactory<T>): Krate<T> {
+fun <T : Any> Krate<T?>.withDefault(factory: () -> T): Krate<T> {
     return DefaultKrate(
         factory = factory,
         loader = { getValue() },

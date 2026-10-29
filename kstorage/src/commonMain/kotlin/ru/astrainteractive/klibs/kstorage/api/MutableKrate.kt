@@ -3,7 +3,6 @@ package ru.astrainteractive.klibs.kstorage.api
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultCachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
-import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 
 /**
@@ -41,7 +40,7 @@ interface MutableKrate<T> : Krate<T> {
 /**
  * Converts a nullable MutableKrate into a non-nullable one using a fallback factory.
  */
-fun <T : Any> MutableKrate<T?>.withDefault(factory: ValueFactory<T>): MutableKrate<T> {
+fun <T : Any> MutableKrate<T?>.withDefault(factory: () -> T): MutableKrate<T> {
     return DefaultMutableKrate(
         factory = factory,
         saver = { value -> save(value) },

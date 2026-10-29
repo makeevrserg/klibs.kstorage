@@ -1,6 +1,5 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
-import ru.astrainteractive.klibs.kstorage.api.value.ValueFactory
 import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrate
 
@@ -20,7 +19,7 @@ interface SuspendKrate<T> {
  * Converts a nullable SuspendKrate into a non-nullable one by using a fallback factory when null is encountered.
  */
 fun <T : Any> SuspendKrate<T?>.withDefault(
-    factory: ValueFactory<T>,
+    factory: () -> T,
 ): SuspendKrate<T> {
     return DefaultSuspendMutableKrate(
         factory = factory,
