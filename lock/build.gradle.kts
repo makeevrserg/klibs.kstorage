@@ -3,11 +3,17 @@
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("ru.astrainteractive.gradleplugin.publication")
-    id("ru.astrainteractive.gradleplugin.detekt")
+    id("ru.astrainteractive.klibs.rules.gradle.linter")
     id("ru.astrainteractive.gradleplugin.rootinfo")
 }
 
+linter {
+    unitKind.set("library")
+    rootPackage.set("ru.astrainteractive.klibs.kstorage")
+}
+
 kotlin {
+    explicitApi()
     compilerOptions {
         optIn.add("ru.astrainteractive.klibs.kstorage.lock.api.InternalLockApi")
     }
@@ -48,4 +54,9 @@ kotlin {
             }
         }
     }
+}
+
+tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
+    freeCompilerArgs.add("-Xexplicit-api=strict")
+    baseline.set(rootProject.layout.projectDirectory.file("detekt-baseline.xml"))
 }

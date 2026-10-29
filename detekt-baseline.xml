@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ArgumentPerLine:DefaultFlowMutableKrate.kt:DefaultFlowMutableKrate$stateIn(coroutineScope, sharingStarted, factory.invoke())</ID>
+    <ID>ArgumentPerLine:LockTest.kt:LockTest$listOf("a", "b", "c", "d")</ID>
+    <ID>ArgumentPerLine:LockTest.kt:LockTest$listOf(1, 2, 3)</ID>
+    <ID>CalleeBeforeCaller:StateFlowSuspendKrate.kt:public fun &lt;T : Any> StateFlowSuspendKrate&lt;T?>.withDefault: StateFlowSuspendKrate&lt;T></ID>
+    <ID>DeclarationOrder:FlowKrate.kt:FlowKrate$/** * Extension property to easily obtain a [StateFlow] from this [FlowKrate] * within the current [CoroutineScope]. */ public val CoroutineScope.stateFlow: StateFlow&lt;T> get() = stateFlow(coroutineScope = this)</ID>
+    <ID>DeclarationOrder:LinuxLock.kt:LinuxLock.Resources$fun destroy</ID>
+    <ID>DeclarationOrder:MapSettings.kt:MapSettings$override val keys: Set&lt;String> get() = map.keys.map(Any::toString).toSet()</ID>
+    <ID>DeclarationOrder:MapSettings.kt:MapSettings$override val size: Int get() = map.size</ID>
+    <ID>DeclarationOrder:MingwLock.kt:MingwLock.Resources$fun destroy</ID>
+    <ID>ExplicitInvoke:AppleLock.kt:AppleLock$block()</ID>
+    <ID>ExplicitInvoke:LinuxLock.kt:LinuxLock$block()</ID>
+    <ID>ExplicitInvoke:MingwLock.kt:MingwLock$block()</ID>
+    <ID>ExpressionBodyOnOneLine:CachedMutableKrateTest.kt:CachedMutableKrateTest$@Test fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default</ID>
+    <ID>ExpressionBodyOnOneLine:CachedMutableKrateTest.kt:CachedMutableKrateTest$@Test fun GIVEN_2prefilled_store_WHEN_save_and_reset_THEN_saved_and_reset</ID>
+    <ID>ExpressionBodyOnOneLine:CachedMutableKrateTest.kt:CachedMutableKrateTest$@Test fun GIVEN_empty_store_WHEN_save_and_reset_THEN_saved_and_reset</ID>
+    <ID>ExpressionBodyOnOneLine:CachedMutableKrateTest.kt:CachedMutableKrateTest$@Test fun GIVEN_null_as_default_10_as_loader_WHEN_load_THEN_return_loader</ID>
+    <ID>ExpressionBodyOnOneLine:CachedMutableKrateTest.kt:CachedMutableKrateTest$@Test fun GIVEN_one_as_default_another_as_loader_WHEN_load_THEN_return_loader</ID>
+    <ID>ExpressionBodyOnOneLine:CachedMutableKrateTest.kt:CachedMutableKrateTest$@Test fun GIVEN_prefilled_store_WHEN_save_and_reset_THEN_saved_and_reset</ID>
+    <ID>ExpressionBodyOnOneLine:DefaultFlowMutableKrate.kt:DefaultFlowMutableKrate$override fun stateFlow: StateFlow&lt;T></ID>
+    <ID>ExpressionBodyOnOneLine:DefaultFlowMutableKrateTest.kt:DefaultFlowMutableKrateTest$@Test fun GIVEN_krate_with_factory_null_loader_WHEN_get_THEN_from_factory</ID>
+    <ID>ExpressionBodyOnOneLine:DefaultFlowMutableKrateTest.kt:DefaultFlowMutableKrateTest$@Test fun GIVEN_krate_with_null_factory_nonnull_value_WHEN_get_THEN_non_null</ID>
+    <ID>ExpressionBodyOnOneLine:DefaultFlowMutableKrateTest.kt:DefaultFlowMutableKrateTest$@Test fun GIVEN_krate_with_recreated_flow_WHEN_getvalue_THEN_same</ID>
+    <ID>ExpressionBodyOnOneLine:DefaultFlowMutableKrateTest.kt:DefaultFlowMutableKrateTest$@Test fun GIVEN_krate_with_replay_flow_WHEN_save_THEN_saved</ID>
+    <ID>ExpressionBodyOnOneLine:DefaultFlowMutableKrateTest.kt:DefaultFlowMutableKrateTest$@Test fun GIVEN_krate_without_any_value_WHEN_first_THEN_null</ID>
+    <ID>ExpressionBodyOnOneLine:FlowMutableKrateTest.kt:FlowMutableKrateTest$@Test fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default</ID>
+    <ID>ExpressionBodyOnOneLine:FlowMutableKrateTest.kt:FlowMutableKrateTest$@Test fun GIVEN_empty_store_WHEN_save_and_reset_THEN_saved_and_reset</ID>
+    <ID>ExpressionBodyOnOneLine:FlowMutableKrateTest.kt:FlowMutableKrateTest$@Test fun GIVEN_one_as_default_another_as_loader_WHEN_load_THEN_return_loader</ID>
+    <ID>ExpressionBodyOnOneLine:FlowMutableKrateTest.kt:FlowMutableKrateTest$@Test fun GIVEN_prefilled_store_WHEN_save_and_reset_THEN_saved_and_reset</ID>
+    <ID>ExpressionBodyOnOneLine:SuspendMutableKrateTest.kt:SuspendMutableKrateTest$@Test fun GIVEN_10_as_default_value_and_loader_null_WHEN_load_THEN_return_default</ID>
+    <ID>ExpressionBodyOnOneLine:SuspendMutableKrateTest.kt:SuspendMutableKrateTest$@Test fun GIVEN_empty_store_WHEN_save_and_reset_THEN_saved_and_reset</ID>
+    <ID>ExpressionBodyOnOneLine:SuspendMutableKrateTest.kt:SuspendMutableKrateTest$@Test fun GIVEN_manually_not_loaded_WHEN_getting_cached_THEN_loaded_not_factory</ID>
+    <ID>ExpressionBodyOnOneLine:SuspendMutableKrateTest.kt:SuspendMutableKrateTest$@Test fun GIVEN_null_as_default_10_as_loader_WHEN_load_THEN_return_loader</ID>
+    <ID>ExpressionBodyOnOneLine:SuspendMutableKrateTest.kt:SuspendMutableKrateTest$@Test fun GIVEN_one_as_default_another_as_loader_WHEN_load_THEN_return_loader</ID>
+    <ID>ExpressionBodyOnOneLine:SuspendMutableKrateTest.kt:SuspendMutableKrateTest$@Test fun GIVEN_prefilled_store_WHEN_save_and_reset_THEN_saved_and_reset</ID>
+    <ID>FunctionVerb:IoDispatcher.kt:internal expect fun getIoDispatcher: CoroutineDispatcher</ID>
+    <ID>FunctionVerb:IoDispatcher.nonJs.kt:internal actual fun getIoDispatcher: CoroutineDispatcher</ID>
+    <ID>FunctionVerb:IoDispatcher.web.kt:internal actual fun getIoDispatcher: CoroutineDispatcher</ID>
+    <ID>FunctionVerb:Krate.kt:Krate$public fun getValue: T</ID>
+    <ID>FunctionVerb:SuspendKrate.kt:SuspendKrate$public suspend fun getValue: T</ID>
+    <ID>ImplicitItParameter:CachedMutableKrateTest.kt:CachedMutableKrateTest$it</ID>
+    <ID>ImplicitItParameter:DefaultFlowMutableKrateTest.kt:DefaultFlowMutableKrateTest$it</ID>
+    <ID>ImplicitItParameter:SuspendMutableKrateTest.kt:SuspendMutableKrateTest$it</ID>
+    <ID>MaxLineLength:FlowMutableKrate.kt:public</ID>
+    <ID>MaximumLineLength:FlowMutableKrate.kt:{</ID>
+    <ID>OneTypeFamilyPerFile:CachedKrate.kt:public operator fun &lt;T> CachedKrate&lt;T>.getValue: T</ID>
+    <ID>OneTypeFamilyPerFile:FlowKrate.kt:public fun &lt;T : Any> FlowKrate&lt;T?>.withDefault: FlowKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:FlowMutableKrate.kt:public fun &lt;T : Any> FlowMutableKrate&lt;T?>.withDefault: FlowMutableKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:FlowMutableKrate.kt:public fun &lt;T> FlowMutableKrate&lt;T>.asStateFlowSuspendMutableKrate: StateFlowSuspendMutableKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:Krate.kt:public fun &lt;T : Any> Krate&lt;T?>.withDefault: Krate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:Krate.kt:public fun &lt;T> Krate&lt;T>.asCachedKrate: CachedKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:Krate.kt:public fun &lt;T> Krate&lt;T>.asStateFlowKrate: StateFlowKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:MutableKrate.kt:public fun &lt;T : Any> MutableKrate&lt;T?>.withDefault: MutableKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:MutableKrate.kt:public fun &lt;T> MutableKrate&lt;T>.asCachedMutableKrate: CachedMutableKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:MutableKrate.kt:public fun &lt;T> MutableKrate&lt;T>.asStateFlowMutableKrate: StateFlowMutableKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:StateFlowSuspendKrate.kt:public fun &lt;T : Any> StateFlowSuspendKrate&lt;T?>.withDefault: StateFlowSuspendKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:StateFlowSuspendKrate.kt:public operator fun &lt;T> StateFlowSuspendKrate&lt;T>.getValue: T</ID>
+    <ID>OneTypeFamilyPerFile:StateFlowSuspendMutableKrate.kt:public fun &lt;T : Any> StateFlowSuspendMutableKrate&lt;T?>.withDefault: StateFlowSuspendMutableKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:SuspendKrate.kt:public fun &lt;T : Any> SuspendKrate&lt;T?>.withDefault: SuspendKrate&lt;T></ID>
+    <ID>OneTypeFamilyPerFile:SuspendMutableKrate.kt:public fun &lt;T : Any> SuspendMutableKrate&lt;T?>.asStateFlowSuspendMutableKrate: StateFlowSuspendMutableKrate&lt;T?></ID>
+    <ID>OneTypeFamilyPerFile:SuspendMutableKrate.kt:public fun &lt;T : Any> SuspendMutableKrate&lt;T?>.withDefault: SuspendMutableKrate&lt;T></ID>
+    <ID>OperatorBeforeTrailingCall:LockTest.kt:LockTest$(writers + readers)</ID>
+    <ID>ParameterListWrapping:FlowMutableKrate.kt:(scope: CoroutineScope)</ID>
+    <ID>RunCatchingCancellation:LockTest.kt:LockTest$runCatching { lock.withLock { error("boom") } }</ID>
+    <ID>RunCatchingCancellation:LockTest.kt:LockTest$runCatching { lock.withLock { error("test error") } }</ID>
+    <ID>RunCatchingCancellation:LockTest.kt:LockTest$runCatching { lock.withLock { lock.withLock { error("inner boom") } } }</ID>
+    <ID>RunCatchingCancellation:LockTest.kt:LockTest$runCatching { lock.withSuspendLock { error("suspend boom") } }</ID>
+    <ID>RunCatchingCancellation:LockTest.kt:LockTest$runCatching { lock.withSuspendLock { error("suspend error") } }</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_executing_withLock_THEN_is_locked_inside_and_unlocked_after</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_executing_withSuspendLock_THEN_is_locked_inside_and_unlocked_after</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_many_concurrent_withLock_increments_THEN_no_updates_are_lost</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_multiple_sequential_withLock_calls_THEN_all_blocks_execute_in_order</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_nested_inner_withLock_block_throws_THEN_is_locked_is_false_afterwards</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_withLock_and_withSuspendLock_are_interleaved_THEN_all_blocks_run_in_order</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_withLock_block_throws_THEN_is_locked_is_false_afterwards</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_withLock_is_nested_THEN_inner_block_runs_without_deadlock</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_withLock_is_nested_THEN_is_locked_stays_true_until_the_outermost_block_returns</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_withLock_is_nested_inside_withSuspendLock_THEN_inner_runs_without_deadlock</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_withLock_is_nested_three_levels_THEN_all_levels_execute_outermost_first</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_withSuspendLock_block_throws_THEN_is_locked_is_false_afterwards</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_withSuspendLock_is_nested_THEN_inner_runs_without_deadlock</ID>
+    <ID>TestFunctionName:LockTest.kt:LockTest$@Test fun GIVEN_lock_WHEN_withSuspendLock_is_nested_THEN_is_locked_stays_true_until_the_outermost_block_returns</ID>
+    <ID>TrivialLambdaReference:FlowMutableKrate.kt:{ value -> save(value) }</ID>
+    <ID>TrivialLambdaReference:StateFlowSuspendMutableKrate.kt:{ value -> save(value) }</ID>
+  </CurrentIssues>
+</SmellBaseline>
