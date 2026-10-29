@@ -40,7 +40,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlin.coroutines.core)
-                api(project(":lock"))
+                implementation(project(":lock"))
             }
         }
         val commonTest by getting {
