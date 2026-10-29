@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
+import ru.astrainteractive.klibs.kstorage.lock.api.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueLoader
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver

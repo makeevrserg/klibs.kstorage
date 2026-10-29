@@ -3,7 +3,7 @@ package ru.astrainteractive.klibs.kstorage.api
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultCachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.impl.DefaultStateFlowMutableKrate
-import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
+import ru.astrainteractive.klibs.kstorage.lock.api.LockOwner
 
 /**
  * Represents a mutable key-value container (Krate) that allows both reading and modifying its stored value.

@@ -2,7 +2,7 @@ package ru.astrainteractive.klibs.kstorage.suspend
 
 import kotlinx.coroutines.CoroutineDispatcher
 import ru.astrainteractive.klibs.kstorage.coroutines.getIoDispatcher
-import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
+import ru.astrainteractive.klibs.kstorage.lock.api.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultStateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrate
 

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
+import ru.astrainteractive.klibs.kstorage.lock.api.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.FlowProvider
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import ru.astrainteractive.klibs.kstorage.api.Krate
 import ru.astrainteractive.klibs.kstorage.api.StateFlowKrate
-import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
+import ru.astrainteractive.klibs.kstorage.lock.api.LockOwner
 
 class DefaultStateFlowKrate<T>(
     private val instance: Krate<T>,

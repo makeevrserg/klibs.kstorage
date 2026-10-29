@@ -1,10 +1,13 @@
-package ru.astrainteractive.klibs.kstorage.internal.lock
+@file:Suppress("KindShape")
+
+package ru.astrainteractive.klibs.kstorage.lock.mutex
 
 import kotlinx.coroutines.runBlocking
+import ru.astrainteractive.klibs.kstorage.lock.api.Lock
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-class JvmLock : Lock {
+internal class JvmLock : Lock {
     private val reentrantLock = ReentrantLock()
 
     override val isLocked: Boolean

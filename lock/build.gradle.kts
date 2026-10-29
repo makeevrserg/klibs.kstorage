@@ -8,6 +8,9 @@ plugins {
 }
 
 kotlin {
+    compilerOptions {
+        optIn.add("ru.astrainteractive.klibs.kstorage.lock.api.InternalLockApi")
+    }
     jvm()
     js(IR) {
         browser { testTask { isEnabled = false } }

@@ -1,6 +1,6 @@
 package ru.astrainteractive.klibs.kstorage.suspend
 
-import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
+import ru.astrainteractive.klibs.kstorage.lock.api.LockOwner
 import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrate
 
 /**

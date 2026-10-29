@@ -1,4 +1,4 @@
-package ru.astrainteractive.klibs.kstorage.internal.lock
+package ru.astrainteractive.klibs.kstorage.lock.util
 
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async

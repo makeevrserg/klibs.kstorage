@@ -2,7 +2,7 @@ package ru.astrainteractive.klibs.kstorage.api.impl
 
 import ru.astrainteractive.klibs.kstorage.api.CachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
-import ru.astrainteractive.klibs.kstorage.internal.lock.LockOwner
+import ru.astrainteractive.klibs.kstorage.lock.api.LockOwner
 
 class DefaultCachedMutableKrate<T>(
     private val instance: MutableKrate<T>,

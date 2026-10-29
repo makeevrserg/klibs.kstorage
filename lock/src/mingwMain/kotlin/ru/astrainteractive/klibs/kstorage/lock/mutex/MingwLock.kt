@@ -1,4 +1,6 @@
-package ru.astrainteractive.klibs.kstorage.internal.lock
+@file:Suppress("KindShape")
+
+package ru.astrainteractive.klibs.kstorage.lock.mutex
 
 import kotlinx.cinterop.Arena
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -8,12 +10,13 @@ import kotlinx.coroutines.runBlocking
 import platform.posix.pthread_mutex_destroy
 import platform.posix.pthread_mutex_init
 import platform.posix.pthread_mutex_lock
-import platform.posix.pthread_mutex_t
+import platform.posix.pthread_mutex_tVar
 import platform.posix.pthread_mutex_unlock
 import platform.posix.pthread_mutexattr_destroy
 import platform.posix.pthread_mutexattr_init
 import platform.posix.pthread_mutexattr_settype
-import platform.posix.pthread_mutexattr_t
+import platform.posix.pthread_mutexattr_tVar
+import ru.astrainteractive.klibs.kstorage.lock.api.Lock
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.decrementAndFetch
@@ -25,7 +28,7 @@ import kotlin.native.ref.createCleaner
  * @author https://github.com/arkivanov
  */
 @OptIn(ExperimentalForeignApi::class, ExperimentalAtomicApi::class)
-class LinuxLock : Lock {
+internal class MingwLock : Lock {
     private val resources = Resources()
 
     @Suppress("unused") // Must be assigned
@@ -62,8 +65,8 @@ class LinuxLock : Lock {
 
     private class Resources {
         private val arena = Arena()
-        private val attr: pthread_mutexattr_t = arena.alloc()
-        val mutex: pthread_mutex_t = arena.alloc()
+        private val attr: pthread_mutexattr_tVar = arena.alloc()
+        val mutex: pthread_mutex_tVar = arena.alloc()
 
         init {
             pthread_mutexattr_init(attr.ptr)
@@ -79,13 +82,12 @@ class LinuxLock : Lock {
     }
 
     companion object {
-
         /**
          * Wrapper for platform.posix.PTHREAD_MUTEX_RECURSIVE which
          * is represented as kotlin.Int on darwin platforms and kotlin.UInt on linuxX64
          * See: // https://youtrack.jetbrains.com/issue/KT-41509
          * @author https://github.com/arkivanov
          */
-        private val PTHREAD_MUTEX_RECURSIVE: Int get() = platform.posix.PTHREAD_MUTEX_RECURSIVE.toInt()
+        private val PTHREAD_MUTEX_RECURSIVE: Int get() = platform.posix.PTHREAD_MUTEX_RECURSIVE
     }
 }

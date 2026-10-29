@@ -1,6 +1,10 @@
-package ru.astrainteractive.klibs.kstorage.internal.lock
+@file:Suppress("KindShape")
 
-class JsLock : Lock {
+package ru.astrainteractive.klibs.kstorage.lock.mutex
+
+import ru.astrainteractive.klibs.kstorage.lock.api.Lock
+
+internal class JsLock : Lock {
     private var lockDepth = 0
 
     override val isLocked: Boolean

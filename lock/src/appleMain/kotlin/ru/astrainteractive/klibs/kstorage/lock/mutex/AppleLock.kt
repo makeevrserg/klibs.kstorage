@@ -1,14 +1,17 @@
-package ru.astrainteractive.klibs.kstorage.internal.lock
+@file:Suppress("KindShape")
+
+package ru.astrainteractive.klibs.kstorage.lock.mutex
 
 import kotlinx.coroutines.runBlocking
 import platform.Foundation.NSRecursiveLock
+import ru.astrainteractive.klibs.kstorage.lock.api.Lock
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.decrementAndFetch
 import kotlin.concurrent.atomics.incrementAndFetch
 
 @OptIn(ExperimentalAtomicApi::class)
-class AppleLock : Lock {
+internal class AppleLock : Lock {
     private val nsLock = NSRecursiveLock()
 
     private val lockDepth = AtomicInt(0)
