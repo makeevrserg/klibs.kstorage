@@ -15,7 +15,7 @@ import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-class DefaultStateFlowSuspendMutableKrate<T>(
+public class DefaultStateFlowSuspendMutableKrate<T>(
     private val factory: () -> T,
     private val loader: SuspendValueLoader<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),

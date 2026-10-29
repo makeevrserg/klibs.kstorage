@@ -11,38 +11,38 @@ import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrat
  * This interface extends [SuspendKrate], adding the ability to save and reset values
  * in an asynchronous manner, making it suitable for use cases that involve I/O operations.
  */
-interface SuspendMutableKrate<T> : SuspendKrate<T> {
+public interface SuspendMutableKrate<T> : SuspendKrate<T> {
 
     /**
      * Suspends while saving the given value to the underlying storage.
      */
-    suspend fun save(value: T)
+    public suspend fun save(value: T)
 
     /**
      * Suspends while retrieving the current value, transforms it using the suspend block, and saves the result.
      */
-    suspend fun save(block: suspend (T) -> T)
+    public suspend fun save(block: suspend (T) -> T)
 
     /**
      * Suspends while transforming the current value using the suspend block, saves it, and returns the new value.
      */
-    suspend fun saveAndGet(block: suspend (T) -> T): T
+    public suspend fun saveAndGet(block: suspend (T) -> T): T
 
     /**
      * Suspends while resetting the stored value to its default or initial state.
      */
-    suspend fun reset()
+    public suspend fun reset()
 
     /**
      * Suspends while resetting the Krate to its default value and returns the new value.
      */
-    suspend fun resetAndGet(): T
+    public suspend fun resetAndGet(): T
 }
 
 /**
  * Converts a nullable suspend-based MutableKrate into a StateFlowSuspendMutableKrate for reactive value observation.
  */
-fun <T : Any> SuspendMutableKrate<T?>.asStateFlowSuspendMutableKrate(
+public fun <T : Any> SuspendMutableKrate<T?>.asStateFlowSuspendMutableKrate(
     coroutineContext: CoroutineDispatcher = getIoDispatcher()
 ): StateFlowSuspendMutableKrate<T?> {
     return DefaultStateFlowSuspendMutableKrate(
@@ -57,7 +57,7 @@ fun <T : Any> SuspendMutableKrate<T?>.asStateFlowSuspendMutableKrate(
 /**
  * Converts a nullable SuspendMutableKrate into a non-nullable one by providing a default via the given factory.
  */
-fun <T : Any> SuspendMutableKrate<T?>.withDefault(
+public fun <T : Any> SuspendMutableKrate<T?>.withDefault(
     factory: () -> T,
 ): SuspendMutableKrate<T> {
     return DefaultSuspendMutableKrate(

@@ -7,4 +7,4 @@ import kotlinx.coroutines.flow.StateFlow
  * This interface allows access to a cached value, provides a reactive [StateFlow] for state observation,
  * and supports saving and resetting the stored value.
  */
-interface StateFlowMutableKrate<T> : CachedMutableKrate<T>, StateFlowKrate<T>
+public interface StateFlowMutableKrate<T> : CachedMutableKrate<T>, StateFlowKrate<T>

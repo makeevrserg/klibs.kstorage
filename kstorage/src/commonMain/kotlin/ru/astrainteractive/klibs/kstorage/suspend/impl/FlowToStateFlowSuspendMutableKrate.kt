@@ -6,7 +6,7 @@ import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.StateFlowSuspendMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
 
-class FlowToStateFlowSuspendMutableKrate<T>(
+public class FlowToStateFlowSuspendMutableKrate<T>(
     private val instance: FlowMutableKrate<T>,
     scope: CoroutineScope
 ) : StateFlowSuspendMutableKrate<T>,

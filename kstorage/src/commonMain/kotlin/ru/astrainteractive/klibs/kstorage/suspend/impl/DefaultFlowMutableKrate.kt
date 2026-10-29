@@ -14,7 +14,7 @@ import ru.astrainteractive.klibs.kstorage.suspend.FlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.suspend.value.FlowProvider
 import ru.astrainteractive.klibs.kstorage.suspend.value.SuspendValueSaver
 
-class DefaultFlowMutableKrate<T>(
+public class DefaultFlowMutableKrate<T>(
     private val factory: () -> T,
     private val loader: FlowProvider<T>,
     private val saver: SuspendValueSaver<T> = SuspendValueSaver.Empty(),

@@ -7,7 +7,7 @@ import ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate
  * Creates [ru.astrainteractive.klibs.kstorage.suspend.SuspendMutableKrate] which value will be stored in-memory
  */
 @Suppress("FunctionNaming")
-fun <T> InMemorySuspendMutableKrate(factory: () -> T): SuspendMutableKrate<T> {
+public fun <T> InMemorySuspendMutableKrate(factory: () -> T): SuspendMutableKrate<T> {
     var value = factory.invoke()
     return DefaultSuspendMutableKrate(
         factory = { value },

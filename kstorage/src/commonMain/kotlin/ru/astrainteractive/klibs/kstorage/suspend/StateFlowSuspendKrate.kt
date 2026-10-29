@@ -12,19 +12,19 @@ import kotlin.reflect.KProperty
  * value retrieval. This interface is ideal for cases where you need to both observe state
  * changes reactively and load the value asynchronously.
  */
-interface StateFlowSuspendKrate<T> : SuspendKrate<T> {
+public interface StateFlowSuspendKrate<T> : SuspendKrate<T> {
 
     /**
      * A [StateFlow] that holds the current value, allowing consumers to reactively observe
      * state changes over time.
      */
-    val cachedStateFlow: StateFlow<T>
+    public val cachedStateFlow: StateFlow<T>
 }
 
 /**
  * Adds a default value fallback to a nullable StateFlowSuspendKrate, producing a non-nullable variant.
  */
-fun <T : Any> StateFlowSuspendKrate<T?>.withDefault(
+public fun <T : Any> StateFlowSuspendKrate<T?>.withDefault(
     factory: () -> T,
     coroutineContext: CoroutineDispatcher = getIoDispatcher()
 ): StateFlowSuspendKrate<T> {
@@ -39,13 +39,13 @@ fun <T : Any> StateFlowSuspendKrate<T?>.withDefault(
 /**
  * Enables Kotlin property delegation to access the current value of a StateFlowSuspendKrate.
  */
-operator fun <T> StateFlowSuspendKrate<T>.getValue(thisRef: Any, property: KProperty<*>): T {
+public operator fun <T> StateFlowSuspendKrate<T>.getValue(thisRef: Any, property: KProperty<*>): T {
     return this.cachedStateFlow.value
 }
 
 /**
  * Enables Kotlin property delegation to access the current value of a StateFlowSuspendKrate.
  */
-operator fun <T> StateFlowSuspendKrate<T>.getValue(thisRef: Nothing?, property: KProperty<*>): T {
+public operator fun <T> StateFlowSuspendKrate<T>.getValue(thisRef: Nothing?, property: KProperty<*>): T {
     return this.cachedStateFlow.value
 }

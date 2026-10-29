@@ -13,12 +13,12 @@ import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultFlowMutableKrate
  * A [Krate] that exposes its value as a Kotlin [Flow] for reactive consumption.
  * Inherits from [SuspendKrate], so it supports suspend-based value loading.
  */
-interface FlowKrate<T> : SuspendKrate<T> {
+public interface FlowKrate<T> : SuspendKrate<T> {
     /**
      * A cold [Flow] that emits values when they change.
      * Consumers can collect this to observe value updates over time.
      */
-    val flow: Flow<T>
+    public val flow: Flow<T>
 
     /**
      * Converts the underlying [Flow] into a [StateFlow] that maintains a current value.
@@ -28,7 +28,7 @@ interface FlowKrate<T> : SuspendKrate<T> {
      * @param coroutineDispatcher The coroutine dispatcher used for state emission.
      * @return A [StateFlow] instance reflecting the current Krate value.
      */
-    fun stateFlow(
+    public fun stateFlow(
         coroutineScope: CoroutineScope,
         sharingStarted: SharingStarted = SharingStarted.Eagerly,
         coroutineDispatcher: CoroutineDispatcher = getIoDispatcher()
@@ -38,14 +38,14 @@ interface FlowKrate<T> : SuspendKrate<T> {
      * Extension property to easily obtain a [StateFlow] from this [FlowKrate]
      * within the current [CoroutineScope].
      */
-    val CoroutineScope.stateFlow: StateFlow<T>
+    public val CoroutineScope.stateFlow: StateFlow<T>
         get() = stateFlow(coroutineScope = this)
 }
 
 /**
  * Converts a nullable FlowKrate to a non-nullable one by applying a default factory.
  */
-fun <T : Any> FlowKrate<T?>.withDefault(
+public fun <T : Any> FlowKrate<T?>.withDefault(
     factory: () -> T,
 ): FlowKrate<T> {
     return DefaultFlowMutableKrate(

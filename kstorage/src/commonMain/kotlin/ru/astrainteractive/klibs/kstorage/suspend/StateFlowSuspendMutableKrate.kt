@@ -12,12 +12,12 @@ import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultStateFlowSuspendMu
  * This interface combines the features of [StateFlowSuspendKrate] and [SuspendMutableKrate],
  * enabling reactive value observation and asynchronous mutation in one interface.
  */
-interface StateFlowSuspendMutableKrate<T> : StateFlowSuspendKrate<T>, SuspendMutableKrate<T>
+public interface StateFlowSuspendMutableKrate<T> : StateFlowSuspendKrate<T>, SuspendMutableKrate<T>
 
 /**
  * Adds a default value fallback to a nullable StateFlowSuspendMutableKrate, returning a non-nullable variant.
  */
-fun <T : Any> StateFlowSuspendMutableKrate<T?>.withDefault(
+public fun <T : Any> StateFlowSuspendMutableKrate<T?>.withDefault(
     factory: () -> T,
     coroutineContext: CoroutineDispatcher = getIoDispatcher()
 ): StateFlowSuspendMutableKrate<T> {

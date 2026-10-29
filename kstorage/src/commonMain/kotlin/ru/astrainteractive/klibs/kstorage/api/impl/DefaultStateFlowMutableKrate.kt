@@ -7,7 +7,7 @@ import ru.astrainteractive.klibs.kstorage.api.MutableKrate
 import ru.astrainteractive.klibs.kstorage.api.StateFlowMutableKrate
 import ru.astrainteractive.klibs.kstorage.lock.api.LockOwner
 
-class DefaultStateFlowMutableKrate<T>(
+public class DefaultStateFlowMutableKrate<T>(
     private val instance: MutableKrate<T>,
 ) : StateFlowMutableKrate<T>, LockOwner by LockOwner.Reusable(instance) {
     private var _cachedStateFlow = lock.withLock {

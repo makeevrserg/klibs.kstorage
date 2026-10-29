@@ -8,17 +8,17 @@ import ru.astrainteractive.klibs.kstorage.suspend.impl.DefaultSuspendMutableKrat
  * The value can be loaded asynchronously, making it suitable for I/O-bound sources
  * like databases, files, or network-backed storages.
  */
-interface SuspendKrate<T> {
+public interface SuspendKrate<T> {
     /**
      * Suspends while retrieving the current value from the underlying storage or cache.
      */
-    suspend fun getValue(): T
+    public suspend fun getValue(): T
 }
 
 /**
  * Converts a nullable SuspendKrate into a non-nullable one by using a fallback factory when null is encountered.
  */
-fun <T : Any> SuspendKrate<T?>.withDefault(
+public fun <T : Any> SuspendKrate<T?>.withDefault(
     factory: () -> T,
 ): SuspendKrate<T> {
     return DefaultSuspendMutableKrate(

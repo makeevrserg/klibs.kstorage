@@ -4,7 +4,7 @@ import ru.astrainteractive.klibs.kstorage.api.CachedMutableKrate
 import ru.astrainteractive.klibs.kstorage.api.MutableKrate
 import ru.astrainteractive.klibs.kstorage.lock.api.LockOwner
 
-class DefaultCachedMutableKrate<T>(
+public class DefaultCachedMutableKrate<T>(
     private val instance: MutableKrate<T>,
 ) : CachedMutableKrate<T>, LockOwner by LockOwner.Reusable(instance) {
     private var _cachedValue = lock.withLock { instance.getValue() }
